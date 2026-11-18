@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Genie family: deep dive</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke='%23FF3621' stroke-width='3.2' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M16 4 28 10.5 16 17 4 10.5Z' fill='%23FF3621'/%3E%3Cpath d='M4 16 16 22.5 28 16'/%3E%3Cpath d='M4 21.5 16 28 28 21.5'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css?v=1794839270">
+</head>
+<body>
+
+<!-- Inline SVG icon sprite (no emojis) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+  <symbol id="i-agent" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4M9 12h.01M15 12h.01M9 16h6"/></symbol>
+  <symbol id="i-one" viewBox="0 0 24 24"><path d="M12 2.2l.75 1.85 1.85.75-1.85.75L12 7.4l-.75-1.85-1.85-.75 1.85-.75z"/><path d="M9.6 12.4c0-1.3 1.05-2.2 2.4-2.2s2.4.9 2.4 2.2"/><path d="M4.6 12.4h12.9c0 2.9-2.6 4.6-6.45 4.6S4.6 15.3 4.6 12.4z"/><path d="M17.5 12.4c1.6.1 2.9-.8 3.9-2.5"/><path d="M4.6 13.2c-1.5.1-2.4-.7-2.4-1.7 0-.9.8-1.6 1.9-1.5"/><path d="M8.9 17l-.6 2.2h7.4l-.6-2.2"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
+  <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/></symbol>
+  <symbol id="i-page" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h5"/></symbol>
+  <symbol id="i-cert" viewBox="0 0 24 24"><path d="M12 3l2.4 1.8 3-.2.9 2.9 2.4 1.8-1 2.8 1 2.8-2.4 1.8-.9 2.9-3-.2L12 21l-2.4-1.8-3 .2-.9-2.9-2.4-1.8 1-2.8-1-2.8 2.4-1.8.9-2.9 3 .2z"/><path d="M8.5 12l2.4 2.4 4.6-4.8"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 13h6M9 17h6M9 9h2"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 01-12 0zM12 17v4"/></symbol>
+  <symbol id="i-branch" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.2"/><circle cx="5" cy="19" r="2.2"/><circle cx="12" cy="19" r="2.2"/><circle cx="19" cy="19" r="2.2"/><path d="M12 7.2v9.6M12 11c-5 0-7 2-7 5.8M12 11c5 0 7 2 7 5.8"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3 3 0 000-6H9a3 3 0 010-6h6.5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.5 9.5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5 13h6l-1 8 8-10h-6z"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12 15h5"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16"/><path d="M8 16v-4M12 16V8M16 16v-6"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.3A5 5 0 0121 19"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-text" viewBox="0 0 24 24"><path d="M5 6h14M5 11h14M5 16h9"/></symbol>
+  <symbol id="i-join" viewBox="0 0 24 24"><circle cx="9" cy="12" r="5.5"/><circle cx="15" cy="12" r="5.5"/></symbol>
+  <symbol id="i-server" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="7" rx="2"/><rect x="4" y="13" width="16" height="7" rx="2"/><path d="M8 7.5h.01M8 16.5h.01"/></symbol>
+  <symbol id="i-git" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="9" r="2.2"/><path d="M6 8.2v7.6M18 11.2c0 3-3 4.3-9.8 5.4"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="i-loop" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0113.7-5.7L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 01-13.7 5.7L4 15.5M4 20v-4.5h4.5"/></symbol>
+  <symbol id="i-dash" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 20V9"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></symbol>
+  <symbol id="i-dev" viewBox="0 0 24 24"><circle cx="8" cy="7" r="3"/><path d="M2.5 20c0-3.3 2.5-6 5.5-6 1.2 0 2.3.4 3.2 1.1"/><path d="M15 13l-2.5 2.5L15 18M19 13l2.5 2.5L19 18"/></symbol>
+  <symbol id="i-skill" viewBox="0 0 24 24"><path d="M5 4h10l4 4v12H5z"/><path d="M15 4v4h4"/><path d="M9 14l2 2 4-4"/></symbol>
+  <symbol id="i-hash" viewBox="0 0 24 24"><path d="M9 4L7 20M17 4l-2 16M4 9h16M3 15h16"/></symbol>
+  <symbol id="i-frame" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><rect x="7" y="8" width="10" height="8" rx="1"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-live" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 00-1-1H5a1 1 0 00-1 1v10a1 1 0 001 1h3"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></symbol>
+  <symbol id="i-gate" viewBox="0 0 24 24"><path d="M3 20V9l9-5 9 5v11"/><path d="M7 20v-7h10v7"/><path d="M12 13v7"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 12.3l2.4 2.4 4.7-5"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+</svg>
+
+<div class="progress" id="progress"></div>
+
+<div class="stage">
+<div class="deck" id="deck">
+
+<!-- Genie family deep dive (interactive tiles and sub-views) -->
+<section class="slide s-tight" data-title="Genie family: deep dive" data-rail="Deep dive" data-color="c-red" data-tiles>
+  <span class="kicker">Deep dive</span>
+  <h1>Genie family: deep dive</h1>
+  <p class="lede">One governed foundation in Unity Catalog, three experiences for three audiences. Pick one to open it.</p>
+  <div class="body">
+    <div class="bigtiles">
+      <button class="bigtile" data-open="d-code">
+        <span class="bt-ic"><svg class="ic xl"><use href="#i-dev"/></svg></span>
+        <span class="bt-name">Genie Code</span>
+        <span class="bt-what">The AI coding and data assistant inside the workspace</span>
+        <span class="bt-who"><svg class="ic sm"><use href="#i-users"/></svg>Data engineers, analytics engineers, data scientists</span>
+        <span class="bt-key"><kbd>1</kbd> open</span>
+      </button>
+      <button class="bigtile" data-open="d-agents">
+        <span class="bt-ic"><svg class="ic xl"><use href="#i-agent"/></svg></span>
+        <span class="bt-name">Genie Agents</span>
+        <span class="bt-what">Curated, domain-specific agents with trusted data, metrics and rules</span>
+        <span class="bt-who"><svg class="ic sm"><use href="#i-users"/></svg>Built by the data team, used by UA managers and analysts</span>
+        <span class="bt-key"><kbd>2</kbd> open</span>
+      </button>
+      <button class="bigtile" data-open="d-one">
+        <span class="bt-ic"><svg class="ic xl"><use href="#i-one"/></svg></span>
+        <span class="bt-name">Genie One</span>
+        <span class="bt-what">One simplified entry point to ask questions and find assets</span>
+        <span class="bt-who"><svg class="ic sm"><use href="#i-users"/></svg>Executives and business users</span>
+        <span class="bt-key"><kbd>3</kbd> open</span>
+      </button>
+    </div>
+  </div>
+  <div class="foot"><div class="docs"><b>Docs</b>
+    <a href="https://learn.microsoft.com/en-us/azure/databricks/genie/">Genie family</a>
+    <span class="fnote">Genie One and Genie Agents usage by users is free through January 31, 2027; service principals are billed.</span>
+  </div><span>1</span></div>
+  <aside class="n"><ul>
+    <li>Three products, one foundation. Same data, same permissions, three audiences.</li>
+    <li>Press 1, 2 or 3 to open a view (B for agent best practices), Esc to come back. Right arrow walks Code, Agents, Best practices, One.</li>
+    <li>The pricing note matters for the gateway design: user identity is free until end of January, service principals are billed.</li>
+  </ul></aside>
+
+  <!-- Detail: Genie Code -->
+  <div class="detail" id="d-code">
+    <div class="d-head"><button class="back" data-close><svg class="ic sm"><use href="#i-left"/></svg>Back <kbd>Esc</kbd></button>
+      <nav class="tabs"><button data-open="d-code" class="on"><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class=""><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class=""><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class=""><kbd>3</kbd>Genie One</button></nav>
+      <span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-dev"/></svg></span>Genie Code</span>
+      <span class="d-sub">For data engineers, analytics engineers and data scientists</span></div>
+    <div class="d-grid">
+      <div class="d-col">
+        <h3>Where it runs</h3>
+        <div class="chips">
+          <span class="chip">Notebooks</span><span class="chip">SQL editor</span><span class="chip">Lakeflow Pipelines Editor</span><span class="chip">AI/BI dashboards</span><span class="chip">MLflow</span><span class="chip">Full-page command center</span>
+        </div>
+        <h3 style="margin-top:14px">Ask it for a task, it plans and runs it</h3>
+        <div class="prompt gc c-blue"><span class="gc-tag">Analyze</span><span class="gc-p">"Write SQL on mv_ua_performance that shows weekly CPI, CTR and IPM for PixelMuse on TikTok Ads since September, run it, and explain what changed."</span>
+          <span class="gc-a"><button class="copy" data-copy="Write SQL on mv_ua_performance that shows weekly CPI, CTR and IPM for PixelMuse on TikTok Ads since September, run it, and explain what changed." data-label="Copy prompt"><svg class="ic sm"><use href="#i-copy"/></svg><span>Copy prompt</span></button><a class="live-btn gc-open" target="_blank" rel="noopener" hidden><svg class="ic sm"><use href="#i-live"/></svg>Open in Genie Code</a></span></div>
+        <div class="prompt gc c-orange"><span class="gc-tag">Build</span><span class="gc-p">"Draft a metric view YAML mv_ua_creative_health with IPM, CTR and CPI by app, channel and install week, with comments, display names and synonyms. Show the YAML only."</span>
+          <span class="gc-a"><button class="copy" data-copy="Draft a metric view YAML mv_ua_creative_health with IPM, CTR and CPI by app, channel and install week, with comments, display names and synonyms. Show the YAML only." data-label="Copy prompt"><svg class="ic sm"><use href="#i-copy"/></svg><span>Copy prompt</span></button><a class="live-btn gc-open" target="_blank" rel="noopener" hidden><svg class="ic sm"><use href="#i-live"/></svg>Open in Genie Code</a></span></div>
+        <div class="prompt gc c-green"><span class="gc-tag">Explain</span><span class="gc-p">"Explain how ROAS D7 is defined in mv_ua_performance, why immature cohorts are excluded, and how it differs from Blended ROAS."</span>
+          <span class="gc-a"><button class="copy" data-copy="Explain how ROAS D7 is defined in mv_ua_performance, why immature cohorts are excluded, and how it differs from Blended ROAS." data-label="Copy prompt"><svg class="ic sm"><use href="#i-copy"/></svg><span>Copy prompt</span></button><a class="live-btn gc-open" target="_blank" rel="noopener" hidden><svg class="ic sm"><use href="#i-live"/></svg>Open in Genie Code</a></span></div>
+        <p class="fine gc-hint" hidden>Opens the demo notebook: press Cmd+I and paste.</p>
+        <p class="fine">Autonomous agent: plans, retrieves context, runs code and fixes errors. Governed by your Unity Catalog permissions.</p>
+      </div>
+      <div class="d-col">
+        <div class="card tight">
+          <div class="head"><div class="badge-ic"><svg class="ic"><use href="#i-skill"/></svg></div><h2>Skill-aware</h2></div>
+          <ul>
+            <li>Ships with built-in skills for notebooks, Unity Catalog, dashboards, pipelines and MLflow</li>
+            <li>Add your own: workspace skills in <code>Workspace/.assistant/skills/</code>, user skills in your home folder</li>
+            <li>Open Agent Skills standard; loaded automatically when relevant, or <code>@</code> mention one</li>
+          </ul>
+        </div>
+        <button class="cta" data-open="d-own">
+          <span class="badge-ic"><svg class="ic"><use href="#i-terminal"/></svg></span>
+          <span><b>Your IDE, your coding agent</b><small>Not everyone builds in Genie Code. Use VS Code or Cursor with Claude Code, Codex or Cursor Agent, connected through Unity Gateway</small></span>
+          <span class="bt-key"><kbd>C</kbd> open</span>
+        </button>
+      </div>
+    </div>
+    <div class="foot"><div class="docs"><b>Docs</b>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-code/">Genie Code</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-code/skills">Genie Code skills</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/agent-skills/">Agent skills for coding assistants</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor#debug-responses-with-genie-code">Debug Genie with Genie Code</a>
+    </div><span>Deep dive / Genie Code</span></div>
+    <aside class="n"><ul>
+      <li>This is for the people who build: the data platform team and analytics engineers.</li>
+      <li>Three prompts, three jobs: analyze with SQL, build a metric view, explain a definition. Each runs on the demo data; open the notebook, press Cmd+I and paste.</li>
+      <li>Skills are the lever for your standards: naming conventions, dbt patterns, PII handling, as a workspace skill everyone gets.</li>
+      <li>If the team prefers Claude Code, Codex or Cursor, press C: same governance, same Genie, same skills.</li>
+    </ul></aside>
+  </div>
+
+  <!-- Detail: Genie Agents -->
+  <div class="detail" id="d-agents">
+    <div class="d-head"><button class="back" data-close><svg class="ic sm"><use href="#i-left"/></svg>Back <kbd>Esc</kbd></button>
+      <nav class="tabs"><button data-open="d-code" class=""><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class="on"><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class=""><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class=""><kbd>3</kbd>Genie One</button></nav>
+      <span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-agent"/></svg></span>Genie Agents</span>
+      <span class="d-sub">Domain-specific environments where data teams configure trusted data, metrics and business rules</span></div>
+    <div class="personas">
+      <div class="p-group">
+        <div class="persona c-blue"><span class="p-ic"><svg class="ic"><use href="#i-dev"/></svg></span><b>Curator</b><small>data team</small></div>
+        <span class="plus">+</span>
+        <div class="persona c-orange"><span class="p-ic"><svg class="ic"><use href="#i-target"/></svg></span><b>Subject matter expert</b><small>e.g. UA lead</small></div>
+      </div>
+      <div class="p-arrow c-orange"><span>build and tune</span><svg viewBox="0 0 120 16" class="arr"><path d="M2 8h112M106 2l8 6-8 6"/></svg><small>metric views, examples, benchmarks</small></div>
+      <div class="persona agent c-red"><span class="p-ic"><svg class="ic"><use href="#i-agent"/></svg></span><b>UA Performance</b><small>Genie Agent</small></div>
+      <div class="p-arrow c-green"><span>ask</span><svg viewBox="0 0 120 16" class="arr"><path d="M2 8h112M106 2l8 6-8 6"/></svg><small>in plain language</small></div>
+      <div class="persona c-green"><span class="p-ic"><svg class="ic"><use href="#i-users"/></svg></span><b>End users</b><small>UA managers, marketing analysts</small></div>
+    </div>
+    <div class="d-grid" style="margin-top:14px">
+      <div class="d-col">
+        <h3>Questions it should answer</h3>
+        <div class="bubble">Which channels had the best ROAS D7 in October?</div>
+        <div class="bubble">Why did PixelMuse CPI on TikTok go up in October?</div>
+        <div class="bubble">Which campaigns are below a 20% ROAS D7 target?</div>
+        <button class="cta c-orange" data-open="d-bp"><span class="badge-ic"><svg class="ic"><use href="#i-check"/></svg></span><span><b>Agent best practices</b><small>How to build an agent like this one: nine habits from the official docs</small></span><span class="bt-key"><kbd>b</kbd> open</span></button>
+      </div>
+      <div class="d-col">
+        <h3>Ways to reach it</h3>
+        <div class="access">
+          <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/talk-to-genie"><svg class="ic sm"><use href="#i-chat"/></svg>Genie Agent UI</a>
+          <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/chat"><svg class="ic sm"><use href="#i-one"/></svg>Genie One</a>
+          <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/genie-slack"><svg class="ic sm"><use href="#i-hash"/></svg>Slack</a>
+          <a href="https://learn.microsoft.com/en-us/azure/databricks/integrations/msft-teams"><svg class="ic sm"><use href="#i-users"/></svg>Microsoft Teams</a>
+          <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/embed"><svg class="ic sm"><use href="#i-frame"/></svg>Embedded in an app (iframe)</a>
+          <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/conversation-api"><svg class="ic sm"><use href="#i-server"/></svg>Conversation API</a>
+          <a href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/genie-agent"><svg class="ic sm"><use href="#i-terminal"/></svg>Genie Agent MCP server <span class="pill pp">Public Preview</span></a>
+          <a href="https://learn.microsoft.com/en-us/azure/databricks/dashboards/genie-spaces"><svg class="ic sm"><use href="#i-dash"/></svg>Ask Genie on dashboards</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="docs"><b>Docs</b>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/">Genie Agents</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices">Curate an effective agent</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor">Test and monitor</a>
+    </div><span>Deep dive / Genie Agents</span></div>
+    <aside class="n"><ul>
+      <li>An agent is a team effort: the curator knows the data, the UA lead knows what the numbers mean.</li>
+      <li>These three questions are in the demo agent's benchmark set. Notice how specific they are: that is what good pilot questions look like.</li>
+      <li>One agent, many doors: the same agent answers in its own UI, Genie One, Slack, Teams, an embedded iframe, the API or MCP.</li>
+    </ul></aside>
+  </div>
+
+  <!-- Detail: Genie One -->
+  <div class="detail" id="d-one">
+    <div class="d-head"><button class="back" data-close><svg class="ic sm"><use href="#i-left"/></svg>Back <kbd>Esc</kbd></button>
+      <nav class="tabs"><button data-open="d-code" class=""><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class=""><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class=""><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class="on"><kbd>3</kbd>Genie One</button></nav>
+      <span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-one"/></svg></span>Genie One</span>
+      <span class="d-sub">For executives, leadership and cross-functional business users <button class="ent-btn" data-ent><svg class="ic sm"><use href="#i-shield"/></svg>Enterprise-ready features</button></span></div>
+    <div class="d-grid one">
+      <div class="d-col">
+        <svg class="onemap" viewBox="0 0 620 236" role="img" aria-label="Genie One routes a question to Genie Agents, dashboards, apps, metric views and Pages under the asking user's Unity Catalog permissions">
+          <rect x="6" y="62" width="608" height="170" rx="14" class="frame"/>
+          <text x="20" y="225" class="frame-t">Unity Catalog permissions of the asking user</text>
+          <rect x="210" y="4" width="200" height="44" rx="12" class="hub"/>
+          <text x="310" y="24" class="hub-t">Genie One</text>
+          <text x="310" y="40" class="hub-s">routes, answers, cites sources</text>
+          <g class="edges"><path d="M310 48 V74"/><path d="M85 74 H535"/><path d="M85 74 V84"/><path d="M235 74 V84"/><path d="M385 74 V84"/><path d="M535 74 V84"/>
+            <path d="M160 74 V150"/><path d="M310 74 V150"/><path d="M460 74 V150"/></g>
+          <g class="node agent"><rect x="20" y="84" width="130" height="50" rx="10"/><text x="85" y="105">UA</text><text x="85" y="121">Performance</text></g>
+          <g class="node agent"><rect x="170" y="84" width="130" height="50" rx="10"/><text x="235" y="105">Subscription</text><text x="235" y="121">Revenue</text></g>
+          <g class="node agent"><rect x="320" y="84" width="130" height="50" rx="10"/><text x="385" y="105">UA Playbook</text><text x="385" y="121">(files)</text></g>
+          <g class="node"><rect x="470" y="84" width="130" height="50" rx="10"/><text x="535" y="105">AI/BI</text><text x="535" y="121">dashboards</text></g>
+          <g class="node"><rect x="94" y="150" width="132" height="44" rx="10"/><text x="160" y="176">Metric views, tables</text></g>
+          <g class="node page"><rect x="244" y="150" width="132" height="44" rx="10"/><text x="310" y="176">Pages</text></g>
+          <g class="node"><rect x="394" y="150" width="132" height="44" rx="10"/><text x="460" y="176">Apps</text></g>
+        </svg>
+        <p class="fine">"It searches available Genie Agents for one relevant to your question." If none matches, it searches for relevant data assets.</p>
+      </div>
+      <div class="d-col">
+        <h3>Use it when</h3>
+        <div class="scen"><svg class="ic sm"><use href="#i-chart"/></svg><span>The CEO asks how marketing efficiency trended this quarter across all apps</span></div>
+        <div class="scen"><svg class="ic sm"><use href="#i-route"/></svg><span>Someone needs the right dashboard or agent without knowing where it lives</span></div>
+        <div class="scen"><svg class="ic sm"><use href="#i-page"/></svg><span>A manager asks for the definition of pLTV and gets the certified Page, cited</span></div>
+        <div class="scen"><svg class="ic sm"><use href="#i-clock"/></svg><span>A morning briefing across domains, as a scheduled task by email</span></div>
+      </div>
+    </div>
+    <div class="onto">
+      <div class="onto-h"><svg class="ic"><use href="#i-layers"/></svg><b>Genie Ontology</b><span>"Genie treats modeled knowledge as more authoritative than learned knowledge, so it takes precedence when the two conflict."</span></div>
+      <div class="onto-g">
+        <div class="onto-c mod"><h4>Modeled knowledge <small>you define, govern and certify</small></h4><div class="chips">
+          <a class="chip" href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/agent-metadata">Metric views: comments, display names, synonyms, formats</a>
+          <a class="chip" href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/pages">Pages with synonyms</a>
+          <a class="chip" href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/domains">Domains</a>
+          <a class="chip" href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/wikis">Wikis <span class="pill beta">Beta</span></a>
+          <a class="chip" href="https://learn.microsoft.com/en-us/azure/databricks/data-governance/unity-catalog/certify-deprecate-data">Certification and deprecation</a>
+          <a class="chip" href="https://learn.microsoft.com/en-us/azure/databricks/genie/genie-ontology/">Curated Genie Agents</a></div></div>
+        <div class="onto-c lrn"><h4>Learned knowledge <small>extracted automatically, ranked by authority</small></h4><div class="chips">
+          <span class="chip">Metric views</span><span class="chip">Dashboards</span><span class="chip">SQL queries, incl. dbt runs</span><span class="chip">Genie Agents</span>
+          <a class="chip" href="https://learn.microsoft.com/en-us/azure/databricks/genie/genie-ontology/external-knowledge-sources/">BI tool definitions <span class="pill beta">Beta</span></a></div></div>
+        <div class="onto-c base"><h4>Also in play</h4><div class="chips">
+          <a class="chip" href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/concepts">UC table and column comments, PK and FK (Genie Agents)</a>
+          <a class="chip" href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/chat">Your memories and past conversations (Genie One, cited)</a></div></div>
+        <a class="onto-c ready" href="https://github.com/databricks-solutions/genie-ontology-readiness" target="_blank" rel="noopener"><h4>Check your readiness</h4>
+          <div class="verbs"><span><b>Assess</b> 7 pillars, 0 to 100 score</span><span><b>Plan</b> prioritized actions</span><span><b>Learn</b> best practices</span></div>
+          <span class="gh"><svg class="ic sm"><use href="#i-git"/></svg>genie-ontology-readiness (Databricks App)</span><span class="cta">Run it on your workspace <span aria-hidden="true">&rarr;</span></span></a>
+      </div>
+    </div>
+    <div class="ent-modal" id="ent-modal"><div class="ent-box"><div class="bp-mh"><span class="bpc-ic c-green"><svg class="ic"><use href="#i-shield"/></svg></span><b>Genie One: enterprise-ready</b><button class="back" data-closeent>Close <kbd>Esc</kbd></button></div><div class="ent-grid"><div class="ent-card c-green"><span class="ent-ic"><svg class="ic"><use href="#i-dash"/></svg></span><div class="ent-t">Branded homepage</div><div class="ent-l">Admins set brand color, logo, a Markdown welcome and pinned agents or dashboards.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/customize-genie-homepage" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-blue"><span class="ent-ic"><svg class="ic"><use href="#i-link"/></svg></span><div class="ent-t">Custom URL<span class="pill pp">Public Preview</span></div><div class="ent-l">One branded entry point for the account, for example acme.azuredatabricks.net/one.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/admin/account-settings/custom-url" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-navy"><span class="ent-ic"><svg class="ic"><use href="#i-layers"/></svg></span><div class="ent-t">Account-level Genie One</div><div class="ent-l">A unified view across workspaces that shows only assets shared with each user.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/#account-level-genie-one" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-red"><span class="ent-ic"><svg class="ic"><use href="#i-shield"/></svg></span><div class="ent-t">Runs as the user</div><div class="ent-l">Queries run as the asker: UC privileges, row filters, masks and bindings apply.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/#governance-and-permissions" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-orange"><span class="ent-ic"><svg class="ic"><use href="#i-users"/></svg></span><div class="ent-t">Least-privilege access</div><div class="ent-l">Consumer access, the least-privileged entitlement, is enough for chat.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/#open-genie-one" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-blue"><span class="ent-ic"><svg class="ic"><use href="#i-users"/></svg></span><div class="ent-t">Account-only users<span class="pill beta">Beta</span></div><div class="ent-l">Users from your identity provider without a workspace get a limited experience.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/account-only-user-access" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-navy"><span class="ent-ic"><svg class="ic"><use href="#i-server"/></svg></span><div class="ent-t">Front-end Private Link<span class="pill beta">Beta</span></div><div class="ent-l">Reach account-level Genie One over a private connection.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/security/network/front-end/front-end-private-connect-account" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-green"><span class="ent-ic"><svg class="ic"><use href="#i-chart"/></svg></span><div class="ent-t">Genie tracing<span class="pill beta">Beta</span></div><div class="ent-l">Prompts, responses and tool results land in the Unity Gateway trace table.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/ai-gateway/genie-traces" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-orange"><span class="ent-ic"><svg class="ic"><use href="#i-plug"/></svg></span><div class="ent-t">External sources via MCP</div><div class="ent-l">Per-user OAuth; the gateway authorizes each call and records usage.</div><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/external-sources" target="_blank" rel="noopener">Docs</a></div><div class="ent-card c-red"><span class="ent-ic"><svg class="ic"><use href="#i-chat"/></svg></span><div class="ent-t">Where people work</div><div class="ent-l">Slack, Microsoft Teams and mobile, plus a Chrome extension (Beta).</div><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/mobile" target="_blank" rel="noopener">Docs</a></div></div><p class="fine">No chip means the docs show no preview label. Custom URL and the account-level view are configured by account admins.</p></div></div>
+    <div class="foot"><div class="docs"><b>Docs</b>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/">Genie One</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/chat">Chat in Genie One</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/genie/genie-ontology/">Genie Ontology</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/">Unity Catalog semantics</a>
+    </div><span>Deep dive / Genie One</span></div>
+    <aside class="n"><ul>
+      <li>This is the front door for leadership. They don't know, and shouldn't need to know, which agent owns which KPI.</li>
+      <li>Everything sits inside the user's own Unity Catalog permissions: a BU lead only sees their BU, even through Genie One.</li>
+      <li>The pLTV example is the one to show live: the answer cites the Page we certified.</li>
+      <li>Scheduled tasks make it a daily briefing without anyone building a report.</li>
+      <li>If they ask about production readiness, open Enterprise-ready features: branding, custom URL, Private Link, tracing, all with status as documented.</li>
+      <li>Bottom band: what feeds the answers. Genie learns from dashboards and queries, including the ones dbt runs; what we model wins when they disagree.</li>
+    </ul></aside>
+  </div>
+  <!-- Detail: own coding agent -->
+  <div class="detail" id="d-own" data-parent="d-code">
+    <div class="d-head"><button class="back" data-open="d-code"><svg class="ic sm"><use href="#i-left"/></svg>Genie Code <kbd>Esc</kbd></button>
+      <nav class="tabs"><button data-open="d-code" class="on"><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class=""><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class=""><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class=""><kbd>3</kbd>Genie One</button></nav>
+      <span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-terminal"/></svg></span>Your IDE, your coding agent</span>
+      <span class="d-sub">Genie Code is one option, not the only one. Keep VS Code or Cursor and Claude Code, Codex or Cursor Agent: Unity Gateway connects them to governed models, Genie and your skills.</span></div>
+    <div class="own">
+      <div class="card tight own-c">
+        <div class="head"><div class="badge-ic"><svg class="ic"><use href="#i-bolt"/></svg></div><h2>Connect with the Unity Gateway CLI</h2><span class="pill ga">Unity Gateway GA</span></div>
+<pre class="mini"><span class="c"># install once (needs Python 3.12+ and uv)</span>
+uv tool install git+https://github.com/databricks/unity-gateway
+<span class="c"># launch your agent from the project folder; sign in on first use</span>
+ug claude        <span class="c"># Claude Code: models, MCP, skills</span>
+ug codex         <span class="c"># Codex: models, MCP, skills</span>
+ug mcp add --agents cursor   <span class="c"># Cursor IDE: MCP tools</span>
+ug cursor        <span class="c"># Cursor Agent CLI: MCP only</span></pre>
+        <p class="fine" style="margin:2px 0 0">Manual alternative: point the agent at <code>https://&lt;workspace-hostname&gt;/ai-gateway/anthropic</code> (Claude Code), <code>.../ai-gateway/codex/v1</code> (Codex) or <code>.../ai-gateway/cursor/v1</code> (Cursor IDE) with a Databricks token.</p>
+        <h3>What you get</h3>
+        <ul>
+          <li>Every request in <code>system.ai_gateway.usage</code>: user, model, tokens, session, agent</li>
+          <li>Coding Agents usage dashboard; spend limits with <code>ug usage</code>; admins can configure agents centrally</li>
+          <li>Unified trace table for gateway and agent traces <span class="pill beta">Beta</span></li>
+        </ul>
+      </div>
+      <div class="card tight own-c">
+        <div class="head"><div class="badge-ic"><svg class="ic"><use href="#i-plug"/></svg></div><h2>Genie and data as tools (MCP)</h2></div>
+<pre class="mini"><span class="c"># add Genie One to your agent</span>
+ug mcp add --agents claude --names system.ai.genie_one_mcp
+<span class="c"># manual: Genie One MCP</span>
+https://&lt;workspace-hostname&gt;/ai-gateway/mcp-services/
+  system.ai.genie_one_mcp?o=&lt;workspace-id&gt;
+<span class="c"># manual: one curated Genie Agent</span>
+https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
+        <div class="mcp-list">
+          <span><b>Genie One MCP</b> <span class="pill ga">GA</span> needs <code>EXECUTE</code> on <code>system.ai.genie_one_mcp</code>; OAuth scope <code>ai-gateway</code></span>
+          <span><b>Genie Agent MCP</b> <span class="pill pp">Public Preview</span> Managed MCP Servers preview; OAuth scope <code>genie</code></span>
+          <span><b>Databricks SQL MCP</b> <span class="pill beta">Beta</span> <code>system.ai.dbsql</code></span>
+        </div>
+        <h3>Skills for building on Databricks</h3>
+        <ul>
+          <li><code>databricks aitools install</code>: official <a href="https://github.com/databricks/databricks-agent-skills">Databricks agent skills</a>, the skills we used to build this demo</li>
+          <li><code>ug skills add</code>: your team's published skills <span class="pill beta">Beta</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="ide">
+      <svg class="ic"><use href="#i-git"/></svg><b>Build and deploy from the IDE</b>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/dev-tools/vscode-ext/">Databricks IDE extension for VS Code and Cursor</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/dev-tools/bundles/">Declarative Automation Bundles</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/dev-tools/cli/">Databricks CLI: <code>databricks bundle deploy</code></a>
+    </div>
+    <div class="foot"><div class="docs"><b>Docs</b>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/ai-gateway/coding-agent-quickstart">Get started (ug)</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/ai-gateway/coding-agent-supported-agents">Supported coding agents</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/ai-gateway/coding-agent-claude">Claude Code</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/ai-gateway/coding-agent-codex">Codex</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/ai-gateway/coding-agent-cursor">Cursor</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/ai-gateway/coding-agent-observability">Monitor coding agents</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/genie-mcp">Genie One MCP</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/agent-skills/">Agent skills</a>
+    </div><span>Deep dive / Genie Code / your IDE</span></div>
+    <aside class="n"><ul>
+      <li>Lead with this: many developers don't want to build Databricks resources in Genie Code. They keep their IDE and their agent.</li>
+      <li>One command, ug claude or ug codex, and they are on governed models with usage per user and session.</li>
+      <li>Left: the models go through Unity Gateway, so usage, spend and traces land in system tables, attributed per user and session.</li>
+      <li>Right: the same Genie One the business uses becomes a tool in the coding agent, with the user's own permissions.</li>
+      <li>Skills teach the agent how to build on Databricks; MCP lets it do the work. Most setups use both.</li>
+    </ul></aside>
+  </div>
+  <!-- Detail: Agent best practices (between Genie Agents and Genie One) -->
+  <div class="detail" id="d-bp">
+    <div class="d-head"><button class="back" data-close><svg class="ic sm"><use href="#i-left"/></svg>Back <kbd>Esc</kbd></button>
+      <nav class="tabs"><button data-open="d-code" class=""><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class=""><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class="on"><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class=""><kbd>3</kbd>Genie One</button></nav>
+      <span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-check"/></svg></span>Best practices for Genie Agents</span>
+      <span class="d-sub">Nine habits from the official docs. Open any card for the details.</span></div>
+    <div class="bpcards">
+      <div class="bpc">
+        <div class="bpc-ic"><svg class="ic"><use href="#i-target"/></svg></div>
+        <div class="bpc-t">Scope and audience</div>
+        <div class="bpc-l">One topic, one audience, few tables.</div>
+        <span class="bpc-demo"><b>Demo</b>2 metric views + 1 function</span>
+        <div class="bpc-a"><button class="more-btn" data-more="m0">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#define-the-purpose-of-your-agent">Docs</a></div>
+        <div class="bpc-more" id="m0"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#define-the-purpose-of-your-agent">One topic and one audience per agent</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#start-small">Five or fewer tables, few columns; 50 is the hard limit</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#configure-settings">Describe the purpose in the agent description</a></li></ul></div>
+      </div>
+      <div class="bpc">
+        <div class="bpc-ic"><svg class="ic"><use href="#i-text"/></svg></div>
+        <div class="bpc-t">Data and metadata</div>
+        <div class="bpc-l">Describe everything in Unity Catalog.</div>
+        <span class="bpc-demo"><b>Demo</b>Commented tables, keys, synonyms</span>
+        <div class="bpc-a"><button class="more-btn" data-more="m1">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices">Docs</a></div>
+        <div class="bpc-more" id="m1"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#start-small">Clear UC table and column descriptions</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#knowledge-mining-recommendations">PK and FK become join relationships</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#hide-or-show-relevant-columns">Pre-join into views or metric views; hide confusing columns</a></li></ul></div>
+      </div>
+      <div class="bpc">
+        <div class="bpc-ic"><svg class="ic"><use href="#i-code"/></svg></div>
+        <div class="bpc-t">Teach with SQL</div>
+        <div class="bpc-l">SQL over prose, every time.</div>
+        <span class="bpc-demo"><b>Demo</b>6 example SQL, 3 filter snippets</span>
+        <div class="bpc-a"><button class="more-btn" data-more="m2">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality">Docs</a></div>
+        <div class="bpc-more" id="m2"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#add-example-sql-queries-and-functions">Example SQL titled with the typical phrasing</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#trusted-assets">Parameters and SQL functions as trusted assets</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#define-sql-expressions">SQL expressions for measures, filters, fields</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#define-join-relationships">Join relationships when keys are not enough</a></li></ul></div>
+      </div>
+      <div class="bpc">
+        <div class="bpc-ic"><svg class="ic"><use href="#i-eye"/></svg></div>
+        <div class="bpc-t">Prompt matching</div>
+        <div class="bpc-l">Match values users actually type.</div>
+        <span class="bpc-demo"><b>Demo</b>9 dimension column configs</span>
+        <div class="bpc-a"><button class="more-btn" data-more="m3">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#prompt-matching-overview">Docs</a></div>
+        <div class="bpc-more" id="m3"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#manage-format-assistance">Format assistance is on by default</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#prompt-matching-components">Entity matching on categorical strings: up to 120 columns, 1,024 values each</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#prompt-matching-components">A row filter excludes the whole table from prompt matching</a></li></ul></div>
+      </div>
+      <div class="bpc">
+        <div class="bpc-ic"><svg class="ic"><use href="#i-chat"/></svg></div>
+        <div class="bpc-t">Instructions last</div>
+        <div class="bpc-l">Text only for global rules.</div>
+        <span class="bpc-demo"><b>Demo</b>One short instructions block</span>
+        <div class="bpc-a"><button class="more-btn" data-more="m4">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#choose-the-right-instruction-type">Docs</a></div>
+        <div class="bpc-more" id="m4"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#choose-the-right-instruction-type">Text only for global rules SQL cannot express</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#prompt-genie-to-ask-clarification-questions">Explicit clarification triggers</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#customize-summaries">A summary section; no conflicts with the SQL</a></li></ul></div>
+      </div>
+      <div class="bpc">
+        <div class="bpc-ic"><svg class="ic"><use href="#i-check"/></svg></div>
+        <div class="bpc-t">Evaluate and monitor</div>
+        <div class="bpc-l">Measure before and after every change.</div>
+        <span class="bpc-demo"><b>Demo</b>33 benchmark questions</span>
+        <div class="bpc-a"><button class="more-btn" data-more="m5">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor">Docs</a></div>
+        <div class="bpc-more" id="m5"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor#use-benchmarks-to-test-alternate-question-phrasings">Benchmarks with two to four phrasings per question</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor#analyze-a-benchmark-run-with-genie-code">Rerun after every change; analyze a run with Genie Code</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor#response-feedback">Monitor tab and feedback; feedback alone changes nothing</a></li></ul></div>
+      </div>
+      <div class="bpc">
+        <div class="bpc-ic"><svg class="ic"><use href="#i-shield"/></svg></div>
+        <div class="bpc-t">Govern</div>
+        <div class="bpc-l">Answers run as the asking user.</div>
+        <span class="bpc-demo"><b>Demo</b>Certified agents and metric views</span>
+        <div class="bpc-a"><button class="more-btn" data-more="m6">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/concepts#how-data-access-works">Docs</a></div>
+        <div class="bpc-more" id="m6"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/concepts#how-data-access-works">Data access is always the end user's own UC identity</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#share-a-genie-agent">Row filters and column masks apply per user</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#share-a-genie-agent">Users need SELECT and CAN VIEW or CAN RUN</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#assign-certification-to-a-genie-agent">Certify the agent; deprecate legacy assets</a></li></ul></div>
+      </div>
+      <div class="bpc">
+        <div class="bpc-ic"><svg class="ic"><use href="#i-server"/></svg></div>
+        <div class="bpc-t">Compute and cost</div>
+        <div class="bpc-l">Serverless warehouse, user identity.</div>
+        <span class="bpc-demo"><b>Demo</b>Serverless SQL, asked as the user</span>
+        <div class="bpc-a"><button class="more-btn" data-more="m7">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#configure-settings">Docs</a></div>
+        <div class="bpc-more" id="m7"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#configure-settings">Pro or serverless warehouse; serverless recommended</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/troubleshooting#performance-issues">Queries over 5 minutes are cancelled: use views or trusted assets</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie/">User usage free through January 31, 2027; service principals billed</a></li></ul></div>
+      </div>
+      <div class="bpc">
+        <div class="bpc-ic"><svg class="ic"><use href="#i-git"/></svg></div>
+        <div class="bpc-t">Lifecycle</div>
+        <div class="bpc-l">Start small, ship as code.</div>
+        <span class="bpc-demo"><b>Demo</b>All three agents in the repo</span>
+        <div class="bpc-a"><button class="more-btn" data-more="m8">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#deploy-and-version-your-agent-with-declarative-automation-bundles">Docs</a></div>
+        <div class="bpc-more" id="m8"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#start-small">Start small and plan to iterate</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#deploy-and-version-your-agent-with-declarative-automation-bundles">Agents as code: bundles or the management APIs</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#clone-a-genie-agent">Clone to test changes; add agents gradually</a></li></ul></div>
+      </div>
+    </div>
+    <div class="bp-modal" id="bp-modal"><div class="bp-box"><div class="bp-mh"><span class="bpc-ic"><svg class="ic"><use href="#i-check"/></svg></span><b id="bp-mt"></b><button class="back" data-closemore>Close <kbd>Esc</kbd></button></div><div id="bp-mb"></div><div class="bp-md" id="bp-md"></div></div></div>
+    <div class="foot"><div class="docs"><b>Docs</b>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices">Curate an effective agent</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality">Tune quality</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor">Test and monitor</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up">Set up</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/concepts">Concepts</a>
+      <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/troubleshooting">Troubleshooting</a>
+    </div><span>Deep dive / Best practices</span></div>
+    <aside class="n"><ul>
+      <li>Don't read all nine. Pick three for the room: scope, teach with SQL, evaluate.</li>
+      <li>Each card says where the demo applies it, so you can jump to the Configure tab and show it.</li>
+      <li>The prompt-matching trade-off matters with row filters: lean on metric view synonyms instead.</li>
+      <li>Every line links to the doc it comes from.</li>
+    </ul></aside>
+  </div>
+</section>
+
+</div>
+</div>
+
+<div class="chrome">
+  <span class="keys"><kbd>O</kbd> overview <kbd>N</kbd> notes</span>
+  <nav class="rail" id="rail" aria-label="Slides"></nav>
+  <span class="chrome-r">
+    <button id="links-btn" class="cbtn" aria-label="Demo links" hidden><svg class="ic sm"><use href="#i-link"/></svg>Links</button>
+    <button id="ov-btn" class="cbtn" aria-label="Overview"><svg class="ic sm"><use href="#i-grid"/></svg></button>
+    <button id="prev" class="cbtn" aria-label="Previous"><svg class="ic sm"><use href="#i-left"/></svg></button>
+    <button id="next" class="cbtn" aria-label="Next"><svg class="ic sm"><use href="#i-right"/></svg></button>
+    <span id="counter">1 / 1</span>
+  </span>
+</div>
+<div class="overview" id="overview" hidden><div class="ov-box"><div class="ov-h"><b>All slides</b><button class="back" id="ov-close">Close <kbd>Esc</kbd></button></div><div class="ov-grid" id="ov-grid"></div></div></div>
+<aside class="notes" id="notes"><h3>Presenter notes</h3><div id="notes-body"></div><p class="hint">Press N to close.</p></aside>
+
+<script src="https://koritadenada.github.io/data-platform-review/genie/demo-links.local.js" onerror="window.DEMO_LINKS = null"></script>
+<script>
+(function () {
+  const deck = document.getElementById('deck');
+  if (!window.DEMO_LINKS) { const ls = document.getElementById('s-links'); if (ls) ls.remove(); }
+  const slides = Array.from(deck.querySelectorAll('.slide'));
+  const TI = Math.max(0, slides.findIndex(sl => sl.hasAttribute('data-tiles')));
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  const notesBody = document.getElementById('notes-body');
+  let i = 0;
+
+  function fit() {
+    const s = Math.min(window.innerWidth / 1280, (window.innerHeight - 46) / 720);
+    deck.style.transform = 'scale(' + s + ')';
+  }
+
+  // Presenter-only demo links (loaded from a local file that is not published)
+  const DL = window.DEMO_LINKS;
+  function esc(t) { return String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function lk(o, ic) {
+    return '<a class="dl-row' + (o.live ? ' live' : '') + '" target="_blank" rel="noopener" href="' + esc(o.url) + '"><svg class="ic sm"><use href="#' + (o.icon || ic) + '"/></svg><span>' + esc(o.name || o.label) + '</span>' +
+      (o.badge ? '<span class="pill beta">' + esc(o.badge) + '</span>' : '') + (o.note ? '<span class="pill pp">' + esc(o.note) + '</span>' : '') +
+      '<svg class="ic sm ext"><use href="#i-right"/></svg></a>';
+  }
+  function card(ic, title, inner, cls) { return '<div class="dl-card ' + (cls || '') + '"><div class="dl-h"><span class="badge-ic"><svg class="ic"><use href="#' + ic + '"/></svg></span><b>' + title + '</b></div>' + inner + '</div>'; }
+  function pill(st) { const c = st === 'GA' ? 'ga' : (st === 'Beta' ? 'beta' : 'pp'); return '<span class="pill ' + c + '">' + esc(st) + '</span>'; }
+  function shq(t) { return '"' + String(t).replace(/(["\\$`])/g, '\\$1') + '"'; }
+  function copyText(t, btn) {
+    const done = () => { const o = btn.dataset.label; btn.classList.add('ok'); btn.lastChild.textContent = 'Copied'; setTimeout(() => { btn.classList.remove('ok'); btn.lastChild.textContent = o; }, 1400); };
+    const fallback = () => { const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} ta.remove(); done(); };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(done, fallback); else fallback();
+  }
+  deck.addEventListener('click', (e) => { const b = e.target.closest('[data-copy]'); if (b && !b.closest('#s-links')) copyText(b.dataset.copy, b); });
+  if (DL && DL.valueMatchingChat) {
+    const live = document.querySelector('#vm-modal .vm-live');
+    if (live) live.insertAdjacentHTML('beforeend', '<a class="live-btn vm-open" target="_blank" rel="noopener" href="' + DL.valueMatchingChat.replace(/"/g, '&quot;') + '"><svg class="ic sm"><use href="#i-live"/></svg>Open live answer</a>');
+    const btn = document.querySelector('[data-vm]');
+    if (btn) btn.insertAdjacentHTML('beforebegin', '<a class="live-btn vm-open" target="_blank" rel="noopener" href="' + DL.valueMatchingChat.replace(/"/g, '&quot;') + '"><svg class="ic sm"><use href="#i-live"/></svg>Live answer</a>');
+  }
+  if (DL && DL.genieCodeNotebook) {
+    document.querySelectorAll('.gc-open').forEach(a => { a.href = DL.genieCodeNotebook; a.hidden = false; });
+    document.querySelectorAll('.gc-hint').forEach(h => h.hidden = false);
+  }
+  if (DL) {
+    const d = document.getElementById('s-links');
+    if (d) {
+    const tests = (DL.tests || []).map((t, k) => '<div class="dl-test"><div class="dl-test-h"><span class="num sm">' + (k + 1) + '</span><b>' + esc(t.title) + '</b>' +
+      '<button class="copy" data-copy="' + esc(t.prompt) + '" data-label="Copy prompt"><svg class="ic sm"><use href="#i-copy"/></svg><span>Copy prompt</span></button>' +
+      '<button class="copy" data-copy="' + esc('cd ' + (DL.testsDir || '.') + ' && claude ' + shq(t.prompt)) + '" data-label="Copy terminal command"><svg class="ic sm"><use href="#i-terminal"/></svg><span>Copy terminal command</span></button></div>' +
+      '<p class="dl-t prompt-t">' + esc(t.prompt) + '</p></div>').join('');
+    const mcp = DL.mcp ? DL.mcp.servers.map(m => '<div class="dl-mcp"><code>' + esc(m.name) + '</code><span>' + esc(m.what) + '</span>' + pill(m.status) + '<small>' + esc(m.detail) + '</small></div>').join('') + '<p class="dl-t">' + esc(DL.mcp.note) + '</p>' + (DL.mcp.links || []).map(x => lk(x, 'i-link')).join('') + (DL.mcp.navHint ? '<p class="dl-t fine">' + esc(DL.mcp.navHint) + '</p>' : '') : '';
+    const dom = DL.domains;
+    d.innerHTML = '<span class="kicker">Presenter only</span><h1>Demo links</h1><p class="lede">Links open in a new tab. Scroll for the MCP tests.</p><div class="body">' +
+      '<div class="dl-scroll"><div class="dl-grid">' +
+        (function () { const A = DL.answers || {}; const ag = (n) => (DL.agents.find(a => a.name === n) || {}).url;
+          const st = [['Semantic layer in Discover', (DL.domains.links || [])[0] && DL.domains.links[0].url, 'i-tag'], ['UA Performance agent', ag('UA Performance'), 'i-agent'], ['Genie One across agents', ag('Genie One'), 'i-one'],
+            ['Playbook over files', A['Playbook over files'] && A['Playbook over files'].url, 'i-live', true], ['Genie One orchestrates', A['Genie One orchestrates'] && A['Genie One orchestrates'].url, 'i-live', true], ['Claude Code via MCP: see Test MCPs below', null, 'i-terminal']];
+          return card('i-play', 'Demo flow', '<div class="dl-flow">' + st.map((x, k) => x[1] ? '<a class="dl-row' + (x[3] ? ' live' : '') + '" target="_blank" rel="noopener" href="' + esc(x[1]) + '"><span class="num sm">' + (k + 1) + '</span><span>' + esc(x[0]) + '</span>' + (x[3] ? '<span class="live-tag"><svg class="ic sm"><use href="#i-live"/></svg>live answer</span>' : '') + '<svg class="ic sm ext"><use href="#i-right"/></svg></a>'
+            : '<div class="dl-row"><span class="num sm">' + (k + 1) + '</span><span>' + esc(x[0]) + '</span></div>').join('') + '</div>', 'c-red full'); })() +
+        card('i-play', 'Presentation and workspace', lk(DL.presentation, 'i-dash') + lk(DL.workspace, 'i-server') + (DL.genieCodeNotebook ? lk({ name: 'Genie Code demo notebook', url: DL.genieCodeNotebook }, 'i-dev') : ''), 'c-navy') +
+        card('i-agent', 'Genie Agents', DL.agents.map(a => lk(a, 'i-agent')).join(''), 'c-red') +
+        card('i-layers', 'Metric views', DL.metricViews.map(m => lk(m, 'i-target')).join(''), 'c-blue') +
+        card('i-tag', 'Domains and Pages', '<p class="dl-t">' + esc(dom.text) + '</p>' + dom.links.map(x => lk(x, 'i-tag')).join('') +
+          '<div class="chips">' + dom.pages.map(x => '<a class="chip" target="_blank" rel="noopener" href="' + esc(x.url) + '"><svg class="ic sm"><use href="#i-page"/></svg>' + esc(x.name) + '</a>').join('') + '</div>' +
+          '<span class="dl-warn"><svg class="ic sm"><use href="#i-alert"/></svg>' + esc(dom.warning) + '</span>', 'c-green wide') +
+        card('i-check', 'Benchmarks and evaluation', (DL.benchmarks || []).map(m => lk(m, 'i-check')).join(''), 'c-orange') +
+        card('i-terminal', 'MCP servers (Claude Code)', mcp, 'c-blue') +
+        card('i-alert', 'Deprecated legacy table', DL.deprecated.map(m => lk(m, 'i-db')).join(''), 'c-orange') +
+        card('i-file', 'Playbook Volume', lk({ name: DL.volume.path, url: DL.volume.url }, 'i-file') + '<p class="dl-t">' + esc(DL.volume.note) + '</p>', 'c-navy') +
+        (DL.rowFilter ? card('i-shield', 'Row filter demo (value matching)', '<p class="dl-t">' + esc(DL.rowFilter.note) + '</p>' +
+          DL.rowFilter.steps.map((st, k) => '<div class="dl-test"><div class="dl-test-h"><span class="num sm">' + (k + 1) + '</span><b>' + esc(st.title) + '</b>' +
+            (st.cmd ? '<button class="copy" data-copy="' + esc(st.cmd) + '" data-label="Copy command"><svg class="ic sm"><use href="#i-terminal"/></svg><span>Copy command</span></button>' : '') +
+            (st.prompt ? '<button class="copy" data-copy="' + esc(st.prompt) + '" data-label="Copy question"><svg class="ic sm"><use href="#i-copy"/></svg><span>Copy question</span></button>' : '') +
+            (st.url ? '<a class="copy" target="_blank" rel="noopener" href="' + esc(st.url) + '"><svg class="ic sm"><use href="#i-agent"/></svg><span>Open agent</span></a>' : '') +
+            '</div>' + (st.cmd || st.prompt ? '<p class="dl-t prompt-t">' + esc(st.cmd || st.prompt) + '</p>' : '') + '</div>').join(''), 'c-red full') : '') +
+        card('i-play', 'Test MCPs', tests + '<p class="dl-t fine">' + esc(DL.testsNote || '') + '</p>', 'c-green full') +
+      '</div></div></div><div class="foot"><div class="docs"><b>Presenter only</b><span class="fnote">Loaded from a local file; not part of the published deck.</span></div><span></span></div>' +
+      '<aside class="n"><ul><li>Presenter-only slide: everything to click during the demo, in order.</li></ul></aside>';
+    d.addEventListener('click', (e) => { const b = e.target.closest('[data-copy]'); if (b) copyText(b.dataset.copy, b); });
+    const lb = document.getElementById('links-btn'); lb.hidden = false;
+    lb.addEventListener('click', () => show(slides.indexOf(d)));
+    }
+
+    // Agent cards and chips link to their Genie Agent (presenter copy only)
+    const agentUrl = (n) => { const a = DL.agents.find(x => x.name === n.replace(' (files)', '')); return a && a.url; };
+    document.querySelectorAll('[data-agent-link]').forEach(card => {
+      const n = card.querySelector('[data-agent-name]').textContent.trim(); const u = agentUrl(n); if (!u) return;
+      const a = document.createElement('a'); a.href = u; a.target = '_blank'; a.rel = 'noopener'; a.className = card.className + ' linked'; a.innerHTML = card.innerHTML + '<span class="open-tag"><svg class="ic sm"><use href="#i-right"/></svg>open</span>';
+      card.replaceWith(a);
+    });
+    document.querySelectorAll('[data-agent]').forEach(ch => { const u = agentUrl(ch.dataset.agent); if (!u) return;
+      const a = document.createElement('a'); a.href = u; a.target = '_blank'; a.rel = 'noopener'; a.className = ch.className + ' linked'; a.innerHTML = ch.innerHTML; ch.replaceWith(a); });
+    // Live answers: turn matching deck text into links to pre-run conversations
+    const A = DL.answers || {};
+    function liveAnchor(el, key, keepTag) {
+      const ans = A[key]; if (!ans) return;
+      const a = document.createElement('a');
+      a.href = ans.url; a.target = '_blank'; a.rel = 'noopener'; a.className = el.className + ' live'; a.title = 'Live answer. Asked: ' + ans.asked;
+      a.innerHTML = el.innerHTML + '<span class="live-tag"><svg class="ic sm"><use href="#i-live"/></svg>live answer</span>';
+      el.replaceWith(a);
+    }
+    document.querySelectorAll('#d-agents .bubble').forEach(el => liveAnchor(el, el.textContent.trim()));
+    document.querySelectorAll('#d-one .scen').forEach(el => liveAnchor(el, el.querySelector('span').textContent.trim()));
+    document.querySelectorAll('.steps .step .card').forEach(c => {
+      const h = c.querySelector('h2'); const ans = h && A[h.textContent.trim()]; if (!ans) return;
+      c.insertAdjacentHTML('beforeend', '<a class="live-btn" target="_blank" rel="noopener" title="Asked: ' + esc(ans.asked) + '" href="' + esc(ans.url) + '"><svg class="ic sm"><use href="#i-live"/></svg>Open live answer</a>');
+    });
+  }
+
+  let openId = null;
+  function setNotes() {
+    const src = openId ? document.getElementById(openId).querySelector('aside.n') : slides[i].querySelector(':scope > aside.n');
+    notesBody.innerHTML = src ? src.innerHTML : '';
+  }
+  function openDetail(id) {
+    const sl = slides[i]; const d = id && sl.querySelector('#' + id);
+    if (!d || d.hidden) return;
+    sl.querySelectorAll('.detail').forEach(x => x.classList.remove('on'));
+    d.classList.add('on'); sl.classList.add('open-detail'); openId = id; setNotes();
+    history.replaceState(null, '', '#' + (i + 1) + '/' + id.replace('d-', ''));
+    if (typeof updateRail === 'function') updateRail();
+  }
+  function closeDetail() {
+    if (!openId) return false;
+    closeMore();
+    slides[i].querySelectorAll('.detail').forEach(x => x.classList.remove('on'));
+    slides[i].classList.remove('open-detail'); openId = null; setNotes();
+    history.replaceState(null, '', '#' + (i + 1));
+    updateRail();
+    return true;
+  }
+  const modal = document.getElementById('bp-modal');
+  function openMore(btn) {
+    const card = btn.closest('.bpc');
+    document.getElementById('bp-mt').textContent = card.querySelector('.bpc-t').textContent;
+    document.getElementById('bp-mb').innerHTML = card.querySelector('.bpc-more').innerHTML;
+    document.getElementById('bp-md').innerHTML = card.querySelector('.bpc-demo').outerHTML;
+    modal.querySelector('.bpc-ic').innerHTML = card.querySelector('.bpc-ic').innerHTML;
+    modal.classList.add('on');
+  }
+  const entM = document.getElementById('ent-modal');
+  const rtM = document.getElementById('rt-modal');
+  const vmM = document.getElementById('vm-modal');
+  function closeMore() {
+    if (entM && entM.classList.contains('on')) { entM.classList.remove('on'); return true; }
+    if (rtM && rtM.classList.contains('on')) { rtM.classList.remove('on'); return true; }
+    if (vmM && vmM.classList.contains('on')) { vmM.classList.remove('on'); return true; }
+    if (!modal.classList.contains('on')) return false; modal.classList.remove('on'); return true; }
+  function overlayOpen() { return modal.classList.contains('on') || (entM && entM.classList.contains('on')) || (rtM && rtM.classList.contains('on')) || (vmM && vmM.classList.contains('on')); }
+  deck.addEventListener('click', (e) => {
+    if (e.target.closest('[data-ent]')) { entM.classList.add('on'); return; }
+    if (e.target.closest('[data-rt]')) { rtM.classList.add('on'); return; }
+    if (e.target.closest('[data-vm]')) { vmM.classList.add('on'); return; }
+    if (e.target.closest('[data-closevm]') || e.target === vmM) { vmM.classList.remove('on'); return; }
+    if (e.target.closest('[data-closert]') || e.target === rtM) { rtM.classList.remove('on'); return; }
+    if (e.target.closest('[data-closeent]') || e.target === entM) { entM.classList.remove('on'); return; }
+    const mb = e.target.closest('[data-more]'); if (mb) { openMore(mb); return; }
+    if (e.target.closest('[data-closemore]') || e.target === modal) { closeMore(); return; }
+    const t = e.target.closest('[data-open]'); if (t) { openDetail(t.dataset.open); return; }
+    if (e.target.closest('[data-close]')) closeDetail();
+  });
+
+
+  // Rollout journey: size the line between the first and last badge, and animate a dot along it
+  function layoutJourney() {
+    const j = document.querySelector('.journey'); if (!j) return;
+    const b = j.querySelectorAll('.j-badge'); if (b.length < 2) return;
+    const cx = el => el.offsetLeft + el.offsetParent.offsetLeft + el.offsetWidth / 2;
+    const xs = Array.from(b).map(cx); const y = b[0].offsetTop + b[0].offsetHeight / 2;
+    const line = document.getElementById('j-line'); const dot = document.getElementById('j-dot');
+    line.style.left = xs[0] + 'px'; line.style.width = (xs[xs.length - 1] - xs[0]) + 'px'; line.style.right = 'auto'; line.style.top = (y - 2) + 'px';
+    dot.style.top = y + 'px';
+    xs.forEach((x, k) => j.style.setProperty('--x' + (k + 1), x + 'px'));
+  }
+
+  // ---- Navigation aids: slide rail, breadcrumbs, overview, sub-view order ----
+  const RAIL = slides.map(sl => [sl.dataset.rail || sl.dataset.title, sl.dataset.color || 'c-navy']);
+  const SUBNAME = { 'd-code': 'Genie Code', 'd-agents': 'Genie Agents', 'd-bp': 'Best practices', 'd-one': 'Genie One', 'd-own': 'Your IDE' };
+  function subOrder() { return ['d-code', 'd-agents', 'd-bp', 'd-one']; }
+  function subIndex(id) { const o = subOrder(); const el = id && document.getElementById(id); const base = el && el.dataset.parent ? el.dataset.parent : id; return o.indexOf(base); }
+  function nextSub() { const o = subOrder(); const k = subIndex(openId); if (k >= 0 && k < o.length - 1) openDetail(o[k + 1]); else show(TI + 1); }
+  function prevSub() { const o = subOrder(); const el = document.getElementById(openId);
+    if (el && el.dataset.parent) { openDetail(el.dataset.parent); return; }
+    const k = subIndex(openId); if (k > 0) openDetail(o[k - 1]); else closeDetail(); }
+  const rail = document.getElementById('rail');
+  function buildRail() {
+    rail.innerHTML = RAIL.map((r, k) => '<button class="seg ' + r[1] + '" data-go="' + k + '" title="' + (k + 1) + '. ' + slides[k].dataset.title + '"><span class="seg-l">' + r[0] + '</span>' +
+      (k === TI ? '<span class="seg-dots">' + subOrder().map(id => '<i data-sub="' + id + '"></i>').join('') + '</span>' : '') + '</button>').join('');
+  }
+  function updateRail() {
+    rail.querySelectorAll('.seg').forEach((b, k) => { b.classList.toggle('cur', k === i); b.classList.toggle('past', k < i); });
+    const cur = subIndex(openId); const order = subOrder();
+    rail.querySelectorAll('.seg-dots i').forEach(d => d.classList.toggle('on', i === TI && cur >= 0 && d.dataset.sub === order[cur]));
+    rail.querySelector('.seg-dots').classList.toggle('show', i === TI && !!openId);
+  }
+  rail.addEventListener('click', (e) => { const b = e.target.closest('[data-go]'); if (b) show(parseInt(b.dataset.go, 10)); });
+  function crumbs() {
+    document.querySelectorAll('#deck .slide[data-tiles] .detail').forEach(d => {
+      if (d.hidden || d.querySelector('.crumb')) return;
+      const head = d.querySelector('.d-head'); if (!head) return;
+      const id = d.id; const o = subOrder(); const k = subIndex(id);
+      const nid = d.dataset.parent ? o[k + 1] : (k >= 0 && k < o.length - 1 ? o[k + 1] : null);
+      const nextLabel = nid ? SUBNAME[nid] : (RAIL[TI + 1] || ['Overview'])[0];
+      head.insertAdjacentHTML('afterbegin', '<div class="crumb"><button class="crumb-home" data-close>Deep dive</button><span>&gt;</span>' +
+        (d.dataset.parent ? '<button class="crumb-home" data-open="' + d.dataset.parent + '">' + SUBNAME[d.dataset.parent] + '</button><span>&gt;</span>' : '') +
+        '<b>' + SUBNAME[id] + '</b><button class="crumb-next" data-next>Next: ' + nextLabel + ' <svg class="ic sm"><use href="#i-right"/></svg></button></div>');
+    });
+  }
+  deck.addEventListener('click', (e) => { if (e.target.closest('[data-next]')) { e.stopPropagation(); nextSub(); } }, true);
+  const ov = document.getElementById('overview');
+  function buildOverview() {
+    document.getElementById('ov-grid').innerHTML = slides.map((sl, k) => {
+      const lede = sl.querySelector(':scope > .lede'); const sub = lede ? lede.textContent : '';
+      const chips = k === TI ? '<div class="ov-chips">' + subOrder().map(id => '<button class="chip" data-ov-sub="' + id + '">' + SUBNAME[id] + '</button>').join('') + '</div>' : '';
+      return '<div class="ov-card ' + RAIL[k][1] + '" data-ov="' + k + '"><span class="num">' + (k + 1) + '</span><b>' + sl.dataset.title + '</b><small>' + sub + '</small>' + chips + '</div>';
+    }).join('');
+  }
+  function openOverview() { buildOverview(); ov.hidden = false; }
+  function closeOverview() { if (ov.hidden) return false; ov.hidden = true; return true; }
+  ov.addEventListener('click', (e) => {
+    const c = e.target.closest('[data-ov-sub]'); if (c) { closeOverview(); show(TI); openDetail(c.dataset.ovSub); return; }
+    const card = e.target.closest('[data-ov]'); if (card) { closeOverview(); show(parseInt(card.dataset.ov, 10)); return; }
+    if (e.target === ov || e.target.closest('#ov-close')) closeOverview();
+  });
+  document.getElementById('ov-btn').addEventListener('click', () => ov.hidden ? openOverview() : closeOverview());
+
+  function show(n, push) {
+    closeDetail();
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((el, k) => el.classList.toggle('active', k === i));
+    counter.textContent = (i + 1) + ' / ' + slides.length;
+    progress.style.width = ((i + 1) / slides.length * 100) + '%';
+    setNotes();
+    document.title = slides[i].dataset.title + ' | Genie session';
+    if (push !== false) history.replaceState(null, '', '#' + (i + 1));
+    updateRail();
+    if (slides[i].querySelector('.journey')) requestAnimationFrame(layoutJourney);
+  }
+  function fromHash() {
+    const h = parseInt(location.hash.replace('#', '').split('/')[0], 10);
+    return isNaN(h) ? 0 : h - 1;
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key;
+    if ((k === 'Escape') && closeOverview()) { e.preventDefault(); return; }
+    if (k === 'o' || k === 'O') { e.preventDefault(); ov.hidden ? openOverview() : closeOverview(); return; }
+    if (!ov.hidden) return;
+    if ((k === 'Escape' || k === 'Backspace') && closeMore()) { e.preventDefault(); return; }
+    if ((k === 'Escape' || k === 'Backspace') && openId) {
+      const par = document.getElementById(openId).dataset.parent;
+      e.preventDefault(); if (par) openDetail(par); else closeDetail(); return;
+    }
+    if ((k === 'b' || k === 'B') && slides[i].hasAttribute('data-tiles')) { openDetail('d-bp'); e.preventDefault(); return; }
+    if ((k === 'c' || k === 'C') && slides[i].hasAttribute('data-tiles')) { openDetail('d-own'); e.preventDefault(); return; }
+    if (DL && (k === 'l' || k === 'L')) { const ls = document.getElementById('s-links'); if (ls) show(slides.indexOf(ls)); e.preventDefault(); return; }
+    if (slides[i].hasAttribute('data-tiles') && ['1','2','3'].includes(k)) {
+      const tiles = slides[i].querySelectorAll('.bigtile, .slimtile'); const t = tiles[parseInt(k, 10) - 1];
+      if (t) { openDetail(t.dataset.open); e.preventDefault(); return; }
+    }
+    if (openId && (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ')) { e.preventDefault(); if (!overlayOpen()) nextSub(); return; }
+    if (openId && (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp')) { e.preventDefault(); if (!overlayOpen()) prevSub(); return; }
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ') { e.preventDefault(); show(i + 1); }
+    else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); show(i - 1); }
+    else if (k === 'Home') { show(0); }
+    else if (k === 'End') { show(slides.length - 1); }
+    else if (k === 'n' || k === 'N') { document.body.classList.toggle('show-notes'); }
+    else if (k === 'f' || k === 'F') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+      else document.exitFullscreen();
+    }
+  });
+  document.getElementById('prev').addEventListener('click', () => show(i - 1));
+  document.getElementById('next').addEventListener('click', () => show(i + 1));
+  window.addEventListener('hashchange', () => { if (!location.hash.includes('/')) show(fromHash(), false); });
+  window.addEventListener('resize', fit);
+  slides.forEach((sl, k) => { const f = sl.querySelector(':scope > .foot > span:last-child'); if (f) f.textContent = k + 1; });
+  buildRail(); crumbs();
+  fit();
+  show(fromHash(), false);
+  const sub = location.hash.split('/')[1]; if (sub) openDetail('d-' + sub);
+})();
+</script>
+</body>
+</html>
