@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Genie family: deep dive</title>
+<title>Genie Flavours</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke='%23FF3621' stroke-width='3.2' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M16 4 28 10.5 16 17 4 10.5Z' fill='%23FF3621'/%3E%3Cpath d='M4 16 16 22.5 28 16'/%3E%3Cpath d='M4 21.5 16 28 28 21.5'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=1795030000">
+<link rel="stylesheet" href="style.css?v=1795040000">
 </head>
 <body>
 
@@ -63,9 +63,9 @@
 <div class="deck" id="deck">
 
 <!-- Genie family deep dive (interactive tiles and sub-views) -->
-<section class="slide s-tight" data-title="Genie family: deep dive" data-rail="Deep dive" data-color="c-red" data-tiles>
-  <span class="kicker">Deep dive</span>
-  <h1>Genie family: deep dive</h1>
+<section class="slide s-tight" data-title="Genie Flavours" data-rail="Genie Flavours" data-color="c-red" data-tiles>
+  <span class="kicker">Genie Flavours</span>
+  <h1>Genie Flavours</h1>
   <p class="lede">One governed foundation in Unity Catalog, three experiences for three audiences. Pick one to open it.</p>
   <div class="body">
     <div class="bigtiles">
@@ -91,7 +91,7 @@
         <span class="bt-key"><kbd>3</kbd> open</span>
       </button>
     </div>
-    <button class="slimtile" data-open="d-prod"><span class="badge-ic"><svg class="ic"><use href="#i-git"/></svg></span>
+    <button class="slimtile" data-goslide="s-prod"><span class="badge-ic"><svg class="ic"><use href="#i-git"/></svg></span>
       <span><b>Take it to production</b><small>Deployment guide, checklist, and CI/CD for Genie Agents: dev, staging and prod with a benchmark gate</small></span>
       <span class="bt-key"><kbd>p</kbd> open</span></button>
   </div>
@@ -103,7 +103,7 @@
   <!-- Detail: Genie Code -->
   <div class="detail" id="d-code">
     <div class="d-head"><button class="back" data-close><svg class="ic sm"><use href="#i-left"/></svg>Back <kbd>Esc</kbd></button>
-      <nav class="tabs"><button data-open="d-code" class="on"><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class=""><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class=""><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class=""><kbd>3</kbd>Genie One</button><button data-open="d-prod" class=""><kbd>p</kbd>Production</button></nav>
+      <nav class="tabs"><button data-open="d-code" class="on"><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class=""><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class=""><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class=""><kbd>3</kbd>Genie One</button></nav>
       <span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-dev"/></svg></span>Genie Code</span>
       <span class="d-sub">For data engineers, analytics engineers and data scientists</span></div>
     <div class="d-grid">
@@ -143,13 +143,13 @@
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-code/skills">Genie Code skills</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/agent-skills/">Agent skills for coding assistants</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor#debug-responses-with-genie-code">Debug Genie with Genie Code</a>
-    </div><span>Deep dive / Genie Code</span></div>
+    </div><span>Genie Flavours / Genie Code</span></div>
   </div>
 
   <!-- Detail: Genie Agents -->
   <div class="detail" id="d-agents">
     <div class="d-head"><button class="back" data-close><svg class="ic sm"><use href="#i-left"/></svg>Back <kbd>Esc</kbd></button>
-      <nav class="tabs"><button data-open="d-code" class=""><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class="on"><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class=""><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class=""><kbd>3</kbd>Genie One</button><button data-open="d-prod" class=""><kbd>p</kbd>Production</button></nav>
+      <nav class="tabs"><button data-open="d-code" class=""><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class="on"><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class=""><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class=""><kbd>3</kbd>Genie One</button></nav>
       <span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-agent"/></svg></span>Genie Agents</span>
       <span class="d-sub">Domain-specific environments where data teams configure trusted data, metrics and business rules</span></div>
     <div class="personas">
@@ -183,20 +183,20 @@
           <a href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/genie-agent"><svg class="ic sm"><use href="#i-terminal"/></svg>Genie Agent MCP server <span class="pill pp">Public Preview</span></a>
           <a href="https://learn.microsoft.com/en-us/azure/databricks/dashboards/genie-spaces"><svg class="ic sm"><use href="#i-dash"/></svg>Ask Genie on dashboards</a>
         </div>
-        <button class="cta" data-open="d-prod" style="margin-top:16px"><span class="badge-ic"><svg class="ic"><use href="#i-git"/></svg></span><span><b>Take it to production</b><small>Deployment guide, checklist and CI/CD with a benchmark gate</small></span><span class="bt-key"><kbd>p</kbd> open</span></button>
+        <button class="cta" data-goslide="s-prod" style="margin-top:16px"><span class="badge-ic"><svg class="ic"><use href="#i-git"/></svg></span><span><b>Take it to production</b><small>Deployment guide, checklist and CI/CD with a benchmark gate</small></span><span class="bt-key"><kbd>p</kbd> open</span></button>
       </div>
     </div>
     <div class="foot"><div class="docs"><b>Docs</b>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/">Genie Agents</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices">Curate an effective agent</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor">Test and monitor</a>
-    </div><span>Deep dive / Genie Agents</span></div>
+    </div><span>Genie Flavours / Genie Agents</span></div>
   </div>
 
   <!-- Detail: Genie One -->
   <div class="detail" id="d-one">
     <div class="d-head"><button class="back" data-close><svg class="ic sm"><use href="#i-left"/></svg>Back <kbd>Esc</kbd></button>
-      <nav class="tabs"><button data-open="d-code" class=""><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class=""><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class=""><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class="on"><kbd>3</kbd>Genie One</button><button data-open="d-prod" class=""><kbd>p</kbd>Production</button></nav>
+      <nav class="tabs"><button data-open="d-code" class=""><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class=""><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class=""><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class="on"><kbd>3</kbd>Genie One</button></nav>
       <span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-one"/></svg></span>Genie One</span>
       <span class="d-sub">For executives, leadership and cross-functional business users <button class="ent-btn" data-ent><svg class="ic sm"><use href="#i-shield"/></svg>Enterprise-ready features</button></span></div>
     <div class="d-grid one">
@@ -254,12 +254,12 @@
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-one/chat">Chat in Genie One</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie/genie-ontology/">Genie Ontology</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/">Unity Catalog semantics</a>
-    </div><span>Deep dive / Genie One</span></div>
+    </div><span>Genie Flavours / Genie One</span></div>
   </div>
   <!-- Detail: own coding agent -->
   <div class="detail" id="d-own" data-parent="d-code">
     <div class="d-head"><button class="back" data-open="d-code"><svg class="ic sm"><use href="#i-left"/></svg>Genie Code <kbd>Esc</kbd></button>
-      <nav class="tabs"><button data-open="d-code" class="on"><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class=""><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class=""><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class=""><kbd>3</kbd>Genie One</button><button data-open="d-prod" class=""><kbd>p</kbd>Production</button></nav>
+      <nav class="tabs"><button data-open="d-code" class="on"><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class=""><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class=""><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class=""><kbd>3</kbd>Genie One</button></nav>
       <span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-terminal"/></svg></span>Your IDE, your coding agent</span>
       <span class="d-sub">Genie Code is one option, not the only one. Keep VS Code or Cursor and Claude Code, Codex or Cursor Agent: Unity Gateway connects them to governed models, Genie and your skills.</span></div>
     <div class="own">
@@ -316,12 +316,12 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/ai-gateway/coding-agent-observability">Monitor coding agents</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/genie-mcp">Genie One MCP</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/agent-skills/">Agent skills</a>
-    </div><span>Deep dive / Genie Code / your IDE</span></div>
+    </div><span>Genie Flavours / Genie Code / your IDE</span></div>
   </div>
   <!-- Detail: Agent best practices (between Genie Agents and Genie One) -->
   <div class="detail" id="d-bp">
     <div class="d-head"><button class="back" data-close><svg class="ic sm"><use href="#i-left"/></svg>Back <kbd>Esc</kbd></button>
-      <nav class="tabs"><button data-open="d-code" class=""><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class=""><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class="on"><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class=""><kbd>3</kbd>Genie One</button><button data-open="d-prod" class=""><kbd>p</kbd>Production</button></nav>
+      <nav class="tabs"><button data-open="d-code" class=""><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class=""><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class="on"><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class=""><kbd>3</kbd>Genie One</button></nav>
       <span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-check"/></svg></span>Best practices for Genie Agents</span>
       <span class="d-sub">Nine habits from the official docs. Open any card for the details.</span></div>
     <div class="bpcards">
@@ -406,27 +406,29 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up">Set up</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/concepts">Concepts</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/troubleshooting">Troubleshooting</a>
-      <a href="genie-deployment-guide.html" download="Genie-Agents-Enterprise-Deployment-Guide.html">Deployment guide</a>
+      <a href="genie-deployment-guide.html">Deployment guide</a>
       <a href="https://github.com/koritadenada/genie-agents-ci-cd">CI/CD for Genie Agents</a>
-    </div><span>Deep dive / Best practices</span></div>
+    </div><span>Genie Flavours / Best practices</span></div>
   </div>
 
-  <!-- Detail: Take it to production -->
-  <div class="detail" id="d-prod">
-    <div class="d-head"><button class="back" data-close><svg class="ic sm"><use href="#i-left"/></svg>Back <kbd>Esc</kbd></button>
-      <nav class="tabs"><button data-open="d-code" class=""><kbd>1</kbd>Genie Code</button><button data-open="d-agents" class=""><kbd>2</kbd>Genie Agents</button><button data-open="d-bp" class=""><kbd>b</kbd>Agent best practices</button><button data-open="d-one" class=""><kbd>3</kbd>Genie One</button><button data-open="d-prod" class="on"><kbd>p</kbd>Production</button></nav>
-      <span class="d-title"><span class="badge-ic"><svg class="ic"><use href="#i-git"/></svg></span>Take it to production</span>
-      <span class="d-sub">From a validated agent to an enterprise rollout, with every change tested before it reaches users</span></div>
+</section>
+
+<!-- Take it to production -->
+<section class="slide s-tight" data-title="Take it to production" data-rail="Take it to prod" data-color="c-green" id="s-prod">
+  <span class="kicker">Take it to production</span>
+  <h1>Take it to production</h1>
+  <p class="lede">From a validated agent to an enterprise rollout, with every change tested before it reaches users.</p>
+  <div class="body">
     <div class="d-grid prod-grid">
       <div class="d-col">
         <div class="prod-anim"><iframe title="Genie Agents CI/CD pipeline, animated" src="cicd-pipeline.html" loading="lazy"></iframe></div>
         <p class="fine">Animated: pull request to dev, release to staging with the benchmark gate, promotion to prod. Click a tab in the diagram to open a part.</p>
       </div>
       <div class="d-col prod-cards">
-        <a class="prod-card" href="genie-deployment-guide.html" download="Genie-Agents-Enterprise-Deployment-Guide.html">
-          <span class="badge-ic"><svg class="ic"><use href="#i-down"/></svg></span>
+        <a class="prod-card" href="genie-deployment-guide.html">
+          <span class="badge-ic"><svg class="ic"><use href="#i-file"/></svg></span>
           <span><b>Deployment guide</b><small>Fast start, deployment lifecycle, onboarding checklist and the six success pillars, with Genie One, Domains, Pages and certification</small></span></a>
-        <a class="prod-card" href="https://koritadenada.github.io/genie-deployment-checklist/" target="_blank" rel="noopener">
+        <a class="prod-card" href="https://koritadenada.github.io/genie-deployment-checklist/">
           <span class="badge-ic"><svg class="ic"><use href="#i-check"/></svg></span>
           <span><b>Deployment checklist</b><small>The same guide as a checklist your team ticks off, with owners and due dates per phase</small></span></a>
         <a class="prod-card" href="https://github.com/koritadenada/genie-agents-ci-cd" target="_blank" rel="noopener">
@@ -434,13 +436,13 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
           <span><b>CI/CD for Genie Agents</b><small>Copy this repository: the agent and its benchmarks as code, dev, staging and prod, promoted only above 80% accuracy</small></span></a>
       </div>
     </div>
-    <div class="foot"><div class="docs"><b>Docs</b>
+  </div>
+  <div class="foot"><div class="docs"><b>Docs</b>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/dev-tools/bundles/resources#genie_space">Genie Agents in bundles</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor#benchmarks">Benchmarks</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/dev-tools/auth/provider-github">GitHub Actions sign-in</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#deploy-and-version-your-agent-with-declarative-automation-bundles">Deploy and version an agent</a>
-    </div><span>Deep dive / Take it to production</span></div>
-  </div>
+    </div><span>2</span></div>
 </section>
 
 </div>
@@ -633,8 +635,8 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
 
   // ---- Navigation aids: slide rail, breadcrumbs, overview, sub-view order ----
   const RAIL = slides.map(sl => [sl.dataset.rail || sl.dataset.title, sl.dataset.color || 'c-navy']);
-  const SUBNAME = { 'd-code': 'Genie Code', 'd-agents': 'Genie Agents', 'd-bp': 'Best practices', 'd-one': 'Genie One', 'd-own': 'Your IDE', 'd-prod': 'Production' };
-  function subOrder() { return ['d-code', 'd-agents', 'd-bp', 'd-one', 'd-prod']; }
+  const SUBNAME = { 'd-code': 'Genie Code', 'd-agents': 'Genie Agents', 'd-bp': 'Best practices', 'd-one': 'Genie One', 'd-own': 'Your IDE' };
+  function subOrder() { return ['d-code', 'd-agents', 'd-bp', 'd-one']; }
   function subIndex(id) { const o = subOrder(); const el = id && document.getElementById(id); const base = el && el.dataset.parent ? el.dataset.parent : id; return o.indexOf(base); }
   function nextSub() { const o = subOrder(); const k = subIndex(openId); if (k >= 0 && k < o.length - 1) openDetail(o[k + 1]); else show(TI + 1); }
   function prevSub() { const o = subOrder(); const el = document.getElementById(openId);
@@ -659,12 +661,13 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
       const id = d.id; const o = subOrder(); const k = subIndex(id);
       const nid = d.dataset.parent ? o[k + 1] : (k >= 0 && k < o.length - 1 ? o[k + 1] : null);
       const nextLabel = nid ? SUBNAME[nid] : (RAIL[TI + 1] || ['Overview'])[0];
-      head.insertAdjacentHTML('afterbegin', '<div class="crumb"><button class="crumb-home" data-close>Deep dive</button><span>&gt;</span>' +
+      head.insertAdjacentHTML('afterbegin', '<div class="crumb"><button class="crumb-home" data-close>Genie Flavours</button><span>&gt;</span>' +
         (d.dataset.parent ? '<button class="crumb-home" data-open="' + d.dataset.parent + '">' + SUBNAME[d.dataset.parent] + '</button><span>&gt;</span>' : '') +
         '<b>' + SUBNAME[id] + '</b><button class="crumb-next" data-next>Next: ' + nextLabel + ' <svg class="ic sm"><use href="#i-right"/></svg></button></div>');
     });
   }
   deck.addEventListener('click', (e) => { if (e.target.closest('[data-next]')) { e.stopPropagation(); nextSub(); } }, true);
+  deck.addEventListener('click', (e) => { const g = e.target.closest('[data-goslide]'); if (g) { e.stopPropagation(); show(slides.indexOf(document.getElementById(g.dataset.goslide))); } }, true);
   const ov = document.getElementById('overview');
   function buildOverview() {
     document.getElementById('ov-grid').innerHTML = slides.map((sl, k) => {
@@ -710,7 +713,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
       e.preventDefault(); if (par) openDetail(par); else closeDetail(); return;
     }
     if ((k === 'b' || k === 'B') && slides[i].hasAttribute('data-tiles')) { openDetail('d-bp'); e.preventDefault(); return; }
-    if ((k === 'p' || k === 'P') && slides[i].hasAttribute('data-tiles')) { openDetail('d-prod'); e.preventDefault(); return; }
+    if (k === 'p' || k === 'P') { show(slides.indexOf(document.getElementById('s-prod'))); e.preventDefault(); return; }
     if ((k === 'c' || k === 'C') && slides[i].hasAttribute('data-tiles')) { openDetail('d-own'); e.preventDefault(); return; }
     if (DL && (k === 'l' || k === 'L')) { const ls = document.getElementById('s-links'); if (ls) show(slides.indexOf(ls)); e.preventDefault(); return; }
     if (slides[i].hasAttribute('data-tiles') && ['1','2','3'].includes(k)) {
