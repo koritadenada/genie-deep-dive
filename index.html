@@ -96,11 +96,6 @@
     <a href="https://learn.microsoft.com/en-us/azure/databricks/genie/">Genie family</a>
     <span class="fnote">Genie One and Genie Agents usage by users is free through January 31, 2027; service principals are billed.</span>
   </div><span>1</span></div>
-  <aside class="n"><ul>
-    <li>Three products, one foundation. Same data, same permissions, three audiences.</li>
-    <li>Press 1, 2 or 3 to open a view (B for agent best practices), Esc to come back. Right arrow walks Code, Agents, Best practices, One.</li>
-    <li>The pricing note matters for the gateway design: user identity is free until end of January, service principals are billed.</li>
-  </ul></aside>
 
   <!-- Detail: Genie Code -->
   <div class="detail" id="d-code">
@@ -146,12 +141,6 @@
       <a href="https://learn.microsoft.com/en-us/azure/databricks/agent-skills/">Agent skills for coding assistants</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor#debug-responses-with-genie-code">Debug Genie with Genie Code</a>
     </div><span>Deep dive / Genie Code</span></div>
-    <aside class="n"><ul>
-      <li>This is for the people who build: the data platform team and analytics engineers.</li>
-      <li>Three prompts, three jobs: analyze with SQL, build a metric view, explain a definition. Each runs on the demo data; open the notebook, press Cmd+I and paste.</li>
-      <li>Skills are the lever for your standards: naming conventions, dbt patterns, PII handling, as a workspace skill everyone gets.</li>
-      <li>If the team prefers Claude Code, Codex or Cursor, press C: same governance, same Genie, same skills.</li>
-    </ul></aside>
   </div>
 
   <!-- Detail: Genie Agents -->
@@ -198,11 +187,6 @@
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices">Curate an effective agent</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor">Test and monitor</a>
     </div><span>Deep dive / Genie Agents</span></div>
-    <aside class="n"><ul>
-      <li>An agent is a team effort: the curator knows the data, the UA lead knows what the numbers mean.</li>
-      <li>These three questions are in the demo agent's benchmark set. Notice how specific they are: that is what good pilot questions look like.</li>
-      <li>One agent, many doors: the same agent answers in its own UI, Genie One, Slack, Teams, an embedded iframe, the API or MCP.</li>
-    </ul></aside>
   </div>
 
   <!-- Detail: Genie One -->
@@ -267,14 +251,6 @@
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie/genie-ontology/">Genie Ontology</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/uc-semantics/">Unity Catalog semantics</a>
     </div><span>Deep dive / Genie One</span></div>
-    <aside class="n"><ul>
-      <li>This is the front door for leadership. They don't know, and shouldn't need to know, which agent owns which KPI.</li>
-      <li>Everything sits inside the user's own Unity Catalog permissions: a BU lead only sees their BU, even through Genie One.</li>
-      <li>The pLTV example is the one to show live: the answer cites the Page we certified.</li>
-      <li>Scheduled tasks make it a daily briefing without anyone building a report.</li>
-      <li>If they ask about production readiness, open Enterprise-ready features: branding, custom URL, Private Link, tracing, all with status as documented.</li>
-      <li>Bottom band: what feeds the answers. Genie learns from dashboards and queries, including the ones dbt runs; what we model wins when they disagree.</li>
-    </ul></aside>
   </div>
   <!-- Detail: own coding agent -->
   <div class="detail" id="d-own" data-parent="d-code">
@@ -337,13 +313,6 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/agents/mcp-tools/genie-mcp">Genie One MCP</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/agent-skills/">Agent skills</a>
     </div><span>Deep dive / Genie Code / your IDE</span></div>
-    <aside class="n"><ul>
-      <li>Lead with this: many developers don't want to build Databricks resources in Genie Code. They keep their IDE and their agent.</li>
-      <li>One command, ug claude or ug codex, and they are on governed models with usage per user and session.</li>
-      <li>Left: the models go through Unity Gateway, so usage, spend and traces land in system tables, attributed per user and session.</li>
-      <li>Right: the same Genie One the business uses becomes a tool in the coding agent, with the user's own permissions.</li>
-      <li>Skills teach the agent how to build on Databricks; MCP lets it do the work. Most setups use both.</li>
-    </ul></aside>
   </div>
   <!-- Detail: Agent best practices (between Genie Agents and Genie One) -->
   <div class="detail" id="d-bp">
@@ -434,12 +403,6 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/concepts">Concepts</a>
       <a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/troubleshooting">Troubleshooting</a>
     </div><span>Deep dive / Best practices</span></div>
-    <aside class="n"><ul>
-      <li>Don't read all nine. Pick three for the room: scope, teach with SQL, evaluate.</li>
-      <li>Each card says where the demo applies it, so you can jump to the Configure tab and show it.</li>
-      <li>The prompt-matching trade-off matters with row filters: lean on metric view synonyms instead.</li>
-      <li>Every line links to the doc it comes from.</li>
-    </ul></aside>
   </div>
 </section>
 
@@ -447,7 +410,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
 </div>
 
 <div class="chrome">
-  <span class="keys"><kbd>O</kbd> overview <kbd>N</kbd> notes</span>
+  <span class="keys"><kbd>O</kbd> overview</span>
   <nav class="rail" id="rail" aria-label="Slides"></nav>
   <span class="chrome-r">
     <button id="links-btn" class="cbtn" aria-label="Demo links" hidden><svg class="ic sm"><use href="#i-link"/></svg>Links</button>
@@ -458,7 +421,6 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   </span>
 </div>
 <div class="overview" id="overview" hidden><div class="ov-box"><div class="ov-h"><b>All slides</b><button class="back" id="ov-close">Close <kbd>Esc</kbd></button></div><div class="ov-grid" id="ov-grid"></div></div></div>
-<aside class="notes" id="notes"><h3>Presenter notes</h3><div id="notes-body"></div><p class="hint">Press N to close.</p></aside>
 
 <script src="https://koritadenada.github.io/data-platform-review/genie/demo-links.local.js" onerror="window.DEMO_LINKS = null"></script>
 <script>
@@ -469,7 +431,6 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   const TI = Math.max(0, slides.findIndex(sl => sl.hasAttribute('data-tiles')));
   const counter = document.getElementById('counter');
   const progress = document.getElementById('progress');
-  const notesBody = document.getElementById('notes-body');
   let i = 0;
 
   function fit() {
@@ -538,7 +499,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
             '</div>' + (st.cmd || st.prompt ? '<p class="dl-t prompt-t">' + esc(st.cmd || st.prompt) + '</p>' : '') + '</div>').join(''), 'c-red full') : '') +
         card('i-play', 'Test MCPs', tests + '<p class="dl-t fine">' + esc(DL.testsNote || '') + '</p>', 'c-green full') +
       '</div></div></div><div class="foot"><div class="docs"><b>Presenter only</b><span class="fnote">Loaded from a local file; not part of the published deck.</span></div><span></span></div>' +
-      '<aside class="n"><ul><li>Presenter-only slide: everything to click during the demo, in order.</li></ul></aside>';
+      '';
     d.addEventListener('click', (e) => { const b = e.target.closest('[data-copy]'); if (b) copyText(b.dataset.copy, b); });
     const lb = document.getElementById('links-btn'); lb.hidden = false;
     lb.addEventListener('click', () => show(slides.indexOf(d)));
@@ -571,10 +532,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
   }
 
   let openId = null;
-  function setNotes() {
-    const src = openId ? document.getElementById(openId).querySelector('aside.n') : slides[i].querySelector(':scope > aside.n');
-    notesBody.innerHTML = src ? src.innerHTML : '';
-  }
+  function setNotes() {}
   function openDetail(id) {
     const sl = slides[i]; const d = id && sl.querySelector('#' + id);
     if (!d || d.hidden) return;
@@ -727,7 +685,6 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); show(i - 1); }
     else if (k === 'Home') { show(0); }
     else if (k === 'End') { show(slides.length - 1); }
-    else if (k === 'n' || k === 'N') { document.body.classList.toggle('show-notes'); }
     else if (k === 'f' || k === 'F') {
       if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
       else document.exitFullscreen();
