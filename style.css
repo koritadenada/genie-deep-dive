@@ -1053,3 +1053,9 @@ table.cmp.rt td, table.cmp.rt th { padding: 4px 10px; }
 .qa-d .vm-open { margin-top: 0; padding: 3px 9px; font-size: 11.5px; margin-left: auto; }
 .qa-d .vm-open + .more-btn { margin-left: 0; }
 .vm-live > span { flex: 1 1 85%; } .vm-live .vm-open { margin-left: 21px; }
+
+.prod-links { margin-top: 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12.5px; }
+.prod-links > span { color: var(--ink-2); font-weight: 600; margin-right: 2px; }
+.prod-links a { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--surface); color: var(--ink); text-decoration: none; font-weight: 600; }
+.prod-links a:hover { border-color: var(--accent); color: var(--accent); }
