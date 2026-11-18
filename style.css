@@ -1054,8 +1054,14 @@ table.cmp.rt td, table.cmp.rt th { padding: 4px 10px; }
 .qa-d .vm-open + .more-btn { margin-left: 0; }
 .vm-live > span { flex: 1 1 85%; } .vm-live .vm-open { margin-left: 21px; }
 
-.prod-links { margin-top: 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12.5px; }
-.prod-links > span { color: var(--ink-2); font-weight: 600; margin-right: 2px; }
-.prod-links a { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 8px;
-  background: var(--surface); color: var(--ink); text-decoration: none; font-weight: 600; }
-.prod-links a:hover { border-color: var(--accent); color: var(--accent); }
+
+.slimtile[data-open="d-prod"], .cta[data-open="d-prod"], #d-prod { --accent: var(--green); --accent-soft: var(--green-soft); }
+.prod-grid { grid-template-columns: 1.55fr 1fr; }
+.prod-anim { position: relative; aspect-ratio: 16 / 9; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #fff; box-shadow: var(--shadow); }
+.prod-anim iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.prod-cards { display: flex; flex-direction: column; gap: 12px; }
+.prod-card { display: flex; gap: 14px; align-items: flex-start; padding: 16px 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface);
+  box-shadow: var(--shadow); color: var(--ink); text-decoration: none; transition: border-color .15s, transform .15s; }
+.prod-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.prod-card b { display: block; font-size: 16px; margin-bottom: 3px; }
+.prod-card small { color: var(--ink-2); font-size: 13.5px; line-height: 1.45; }
