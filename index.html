@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Genie family: deep dive</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke='%23FF3621' stroke-width='3.2' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M16 4 28 10.5 16 17 4 10.5Z' fill='%23FF3621'/%3E%3Cpath d='M4 16 16 22.5 28 16'/%3E%3Cpath d='M4 21.5 16 28 28 21.5'/%3E%3C/g%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=1794839270">
+<link rel="stylesheet" href="style.css?v=1795012981">
 </head>
 <body>
 
@@ -356,7 +356,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
         <div class="bpc-ic"><svg class="ic"><use href="#i-target"/></svg></div>
         <div class="bpc-t">Scope and audience</div>
         <div class="bpc-l">One topic, one audience, few tables.</div>
-        <span class="bpc-demo"><b>Demo</b>2 metric views + 1 function</span>
+        <p class="bpc-what">Each agent covers one business area for one audience, so Genie picks the right tables and joins.</p>
         <div class="bpc-a"><button class="more-btn" data-more="m0">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#define-the-purpose-of-your-agent">Docs</a></div>
         <div class="bpc-more" id="m0"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#define-the-purpose-of-your-agent">One topic and one audience per agent</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#start-small">Five or fewer tables, few columns; 50 is the hard limit</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#configure-settings">Describe the purpose in the agent description</a></li></ul></div>
       </div>
@@ -364,7 +364,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
         <div class="bpc-ic"><svg class="ic"><use href="#i-text"/></svg></div>
         <div class="bpc-t">Data and metadata</div>
         <div class="bpc-l">Describe everything in Unity Catalog.</div>
-        <span class="bpc-demo"><b>Demo</b>Commented tables, keys, synonyms</span>
+        <p class="bpc-what">Genie reads Unity Catalog comments, keys and synonyms to choose the right tables, columns and joins.</p>
         <div class="bpc-a"><button class="more-btn" data-more="m1">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices">Docs</a></div>
         <div class="bpc-more" id="m1"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#start-small">Clear UC table and column descriptions</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#knowledge-mining-recommendations">PK and FK become join relationships</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#hide-or-show-relevant-columns">Pre-join into views or metric views; hide confusing columns</a></li></ul></div>
       </div>
@@ -372,7 +372,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
         <div class="bpc-ic"><svg class="ic"><use href="#i-code"/></svg></div>
         <div class="bpc-t">Teach with SQL</div>
         <div class="bpc-l">SQL over prose, every time.</div>
-        <span class="bpc-demo"><b>Demo</b>6 example SQL, 3 filter snippets</span>
+        <p class="bpc-what">Example queries and SQL expressions show Genie the exact logic, which works better than describing it in text.</p>
         <div class="bpc-a"><button class="more-btn" data-more="m2">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality">Docs</a></div>
         <div class="bpc-more" id="m2"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#add-example-sql-queries-and-functions">Example SQL titled with the typical phrasing</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#trusted-assets">Parameters and SQL functions as trusted assets</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#define-sql-expressions">SQL expressions for measures, filters, fields</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#define-join-relationships">Join relationships when keys are not enough</a></li></ul></div>
       </div>
@@ -380,7 +380,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
         <div class="bpc-ic"><svg class="ic"><use href="#i-eye"/></svg></div>
         <div class="bpc-t">Prompt matching</div>
         <div class="bpc-l">Match values users actually type.</div>
-        <span class="bpc-demo"><b>Demo</b>9 dimension column configs</span>
+        <p class="bpc-what">Maps what users type, such as "tik tok", to the value stored in the data, such as "TikTok Ads".</p>
         <div class="bpc-a"><button class="more-btn" data-more="m3">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#prompt-matching-overview">Docs</a></div>
         <div class="bpc-more" id="m3"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#manage-format-assistance">Format assistance is on by default</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#prompt-matching-components">Entity matching on categorical strings: up to 120 columns, 1,024 values each</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/tune-quality#prompt-matching-components">A row filter excludes the whole table from prompt matching</a></li></ul></div>
       </div>
@@ -388,7 +388,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
         <div class="bpc-ic"><svg class="ic"><use href="#i-chat"/></svg></div>
         <div class="bpc-t">Instructions last</div>
         <div class="bpc-l">Text only for global rules.</div>
-        <span class="bpc-demo"><b>Demo</b>One short instructions block</span>
+        <p class="bpc-what">Text instructions are open to interpretation: keep them for rules that SQL and metadata cannot express.</p>
         <div class="bpc-a"><button class="more-btn" data-more="m4">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#choose-the-right-instruction-type">Docs</a></div>
         <div class="bpc-more" id="m4"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#choose-the-right-instruction-type">Text only for global rules SQL cannot express</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#prompt-genie-to-ask-clarification-questions">Explicit clarification triggers</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#customize-summaries">A summary section; no conflicts with the SQL</a></li></ul></div>
       </div>
@@ -396,7 +396,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
         <div class="bpc-ic"><svg class="ic"><use href="#i-check"/></svg></div>
         <div class="bpc-t">Evaluate and monitor</div>
         <div class="bpc-l">Measure before and after every change.</div>
-        <span class="bpc-demo"><b>Demo</b>33 benchmark questions</span>
+        <p class="bpc-what">Benchmarks are test questions with known answers; rerun them to see whether a change helped or hurt.</p>
         <div class="bpc-a"><button class="more-btn" data-more="m5">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor">Docs</a></div>
         <div class="bpc-more" id="m5"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor#use-benchmarks-to-test-alternate-question-phrasings">Benchmarks with two to four phrasings per question</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor#analyze-a-benchmark-run-with-genie-code">Rerun after every change; analyze a run with Genie Code</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/monitor#response-feedback">Monitor tab and feedback; feedback alone changes nothing</a></li></ul></div>
       </div>
@@ -404,7 +404,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
         <div class="bpc-ic"><svg class="ic"><use href="#i-shield"/></svg></div>
         <div class="bpc-t">Govern</div>
         <div class="bpc-l">Answers run as the asking user.</div>
-        <span class="bpc-demo"><b>Demo</b>Certified agents and metric views</span>
+        <p class="bpc-what">Every answer runs with the asking user's permissions, so row filters and column masks still apply.</p>
         <div class="bpc-a"><button class="more-btn" data-more="m6">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/concepts#how-data-access-works">Docs</a></div>
         <div class="bpc-more" id="m6"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/concepts#how-data-access-works">Data access is always the end user's own UC identity</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#share-a-genie-agent">Row filters and column masks apply per user</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#share-a-genie-agent">Users need SELECT and CAN VIEW or CAN RUN</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#assign-certification-to-a-genie-agent">Certify the agent; deprecate legacy assets</a></li></ul></div>
       </div>
@@ -412,7 +412,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
         <div class="bpc-ic"><svg class="ic"><use href="#i-server"/></svg></div>
         <div class="bpc-t">Compute and cost</div>
         <div class="bpc-l">Serverless warehouse, user identity.</div>
-        <span class="bpc-demo"><b>Demo</b>Serverless SQL, asked as the user</span>
+        <p class="bpc-what">Queries run on your SQL warehouse; serverless starts quickly and scales with demand.</p>
         <div class="bpc-a"><button class="more-btn" data-more="m7">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#configure-settings">Docs</a></div>
         <div class="bpc-more" id="m7"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#configure-settings">Pro or serverless warehouse; serverless recommended</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/troubleshooting#performance-issues">Queries over 5 minutes are cancelled: use views or trusted assets</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie/">User usage free through January 31, 2027; service principals billed</a></li></ul></div>
       </div>
@@ -420,7 +420,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
         <div class="bpc-ic"><svg class="ic"><use href="#i-git"/></svg></div>
         <div class="bpc-t">Lifecycle</div>
         <div class="bpc-l">Start small, ship as code.</div>
-        <span class="bpc-demo"><b>Demo</b>All three agents in the repo</span>
+        <p class="bpc-what">Begin with a small pilot, then keep the agent in Git and deploy it like any other code.</p>
         <div class="bpc-a"><button class="more-btn" data-more="m8">See more</button><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#deploy-and-version-your-agent-with-declarative-automation-bundles">Docs</a></div>
         <div class="bpc-more" id="m8"><ul><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#start-small">Start small and plan to iterate</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/best-practices#deploy-and-version-your-agent-with-declarative-automation-bundles">Agents as code: bundles or the management APIs</a></li><li><a href="https://learn.microsoft.com/en-us/azure/databricks/genie-agents/set-up#clone-a-genie-agent">Clone to test changes; add agents gradually</a></li></ul></div>
       </div>
@@ -597,7 +597,7 @@ https://&lt;workspace-hostname&gt;/api/2.0/mcp/genie/&lt;space-id&gt;</pre>
     const card = btn.closest('.bpc');
     document.getElementById('bp-mt').textContent = card.querySelector('.bpc-t').textContent;
     document.getElementById('bp-mb').innerHTML = card.querySelector('.bpc-more').innerHTML;
-    document.getElementById('bp-md').innerHTML = card.querySelector('.bpc-demo').outerHTML;
+    document.getElementById('bp-md').innerHTML = card.querySelector('.bpc-what').outerHTML;
     modal.querySelector('.bpc-ic').innerHTML = card.querySelector('.bpc-ic').innerHTML;
     modal.classList.add('on');
   }
